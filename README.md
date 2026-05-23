@@ -20,7 +20,7 @@
 
 최근 생성형 AI의 활용이 확대되면서 AI가 작성한 글, 뉴스, 게시글, 과제물 등을 탐지하는 문제가 중요해지고 있다. 이에 따라 본 프로젝트에서는 공개 데이터셋을 활용하여 AI-generated text와 human-written text를 분류하고, 여러 머신러닝 알고리즘의 성능을 비교한다.
 
----
+
 
 ## Dataset
 
@@ -47,7 +47,7 @@
 | 0 | Human-written text |
 | 1 | AI-generated text |
 
----
+
 
 ## Methods
 
@@ -70,6 +70,6 @@
 - Training Time
 - Confusion Matrix
 
----
+
 
 ## Repository Structure
