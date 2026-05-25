@@ -135,15 +135,24 @@ better → good
 
 ---
 
-## 6. Why Processed Data May Not Be Fully Uploaded
+## 6. File Size Limitation
 
 GitHub 웹 업로드에는 파일 크기 제한이 있다.  
-따라서 일부 전처리된 데이터 파일, 특히 용량이 큰 파일은 저장소에 직접 업로드되지 않을 수 있다.
+본 프로젝트에서 전처리된 Essay dataset은 이 폴더에 업로드하였으나, `news_clean_dataset.csv` 파일은 용량 제한을 초과하여 업로드하지 않았다.
 
-예를 들어 `news_clean_dataset.csv` 또는 기타 전처리 파일이 용량 제한을 초과할 경우, 해당 파일은 GitHub에 업로드하지 않고 로컬 환경에서 생성하여 사용한다.
+따라서 `news_clean_dataset.csv`는 GitHub 저장소에는 포함되어 있지 않지만, 프로젝트 실행에는 문제가 없다.  
+메인 코드의 전처리 과정을 실행하면 동일한 파일을 로컬 환경에서 다시 생성할 수 있다.
 
-이 경우에도 프로젝트 실행에는 문제가 없다.  
-메인 코드를 실행하면 동일한 전처리 과정이 수행되고, 이 폴더에 clean dataset이 다시 생성된다.
+생성되는 파일은 다음과 같다.
+
+```text
+news_clean_dataset.csv
+
+해당 파일은 다음 명령어를 실행하면 생성된다.
+
+python notebooks/human_vs_ai_text_classification.py
+
+즉, news_clean_dataset.csv는 저장소에 직접 업로드된 파일이 아니라, 코드 실행을 통해 재현 가능한 전처리 결과물이다.
 
 ---
 
