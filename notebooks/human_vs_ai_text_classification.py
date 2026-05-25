@@ -9,7 +9,7 @@
 
 
 import sys
-!{sys.executable} -m pip install nltk xgboost wordcloud matplotlib scikit-learn torch transformers --quiet   # 프로그램 설치하기
+#!{sys.executable} -m pip install nltk xgboost wordcloud matplotlib scikit-learn torch transformers --quiet   # 프로그램 설치하기
 
 import pandas as pd                     # 엑셀처럼 데이터를 표로 다루는 도구
 import re                               # 텍스트에서 특수문자 찾아 지우는 도구
