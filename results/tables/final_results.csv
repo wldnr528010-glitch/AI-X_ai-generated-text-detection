@@ -1,1 +1,6 @@
-
+¸ðµ¨,Essay_Accuracy,Essay_F1,News_Accuracy,News_F1,Hard_Accuracy,Hard_F1
+Logistic Regression,97.6,97.6,99.1,99.1,87.6,87.75
+Naive Bayes,95.9,95.89,93.7,94.06,82.2,84.08
+Random Forest,97.7,97.68,97.7,97.75,86.9,86.73
+XGBoost,97.8,97.78,99.2,99.2,85.9,85.8
+BERT,97.7,97.74,99.2,99.2,93.3,93.64
