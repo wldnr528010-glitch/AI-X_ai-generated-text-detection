@@ -194,6 +194,7 @@ AI-X_ai-generated-text-detection/
 │       └── final_results.csv
 ├── src/
 └── requirements.txt
+```
 
 ## How to Run
 
