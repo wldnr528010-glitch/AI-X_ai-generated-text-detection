@@ -85,7 +85,7 @@ stop_words = set(stopwords.words('english'))
 lemmatizer = WordNetLemmatizer()
 
 # 에세이 데이터 전처리
-df_essay = pd.read_csv('essay_dataset.csv', encoding='latin-1')
+df_essay = pd.read_csv('../data/project_dataset/essay_dataset.csv', encoding='latin-1')
 df_essay['generated'] = pd.to_numeric(df_essay['generated'], errors='coerce')
 df_essay = df_essay.dropna(subset=['generated', 'text'])
 df_essay['generated'] = df_essay['generated'].astype(int)
@@ -96,7 +96,7 @@ print(f"📄 에세이 데이터: {len(df_essay)}행")
 print(f"   사람(0): {(df_essay['generated']==0).sum()}개 | AI(1): {(df_essay['generated']==1).sum()}개")
 
 # 뉴스 데이터 전처리
-df_news = pd.read_csv('news_dataset.csv', encoding='latin-1')
+df_news = pd.read_csv('../data/project_dataset/news_dataset.csv', encoding='latin-1')
 df_news['generated'] = pd.to_numeric(df_news['generated'], errors='coerce')
 df_news = df_news.dropna(subset=['generated', 'text'])
 df_news['generated'] = df_news['generated'].astype(int)
@@ -107,7 +107,7 @@ print(f"📰 뉴스 데이터: {len(df_news)}행")
 print(f"   사람(0): {(df_news['generated']==0).sum()}개 | AI(1): {(df_news['generated']==1).sum()}개")
 
 # 어려운 데이터 전처리 (ChatGPT 글 포함)
-df_hard = pd.read_csv('hard_dataset.csv', encoding='utf-8')
+df_hard = pd.read_csv('../data/project_dataset/hard_dataset.csv', encoding='utf-8')
 df_hard['generated'] = pd.to_numeric(df_hard['generated'], errors='coerce')
 df_hard = df_hard.dropna(subset=['generated', 'text'])
 df_hard['generated'] = df_hard['generated'].astype(int)
@@ -118,9 +118,9 @@ print(f"🔥 어려운 데이터(ChatGPT): {len(df_hard)}행")
 print(f"   사람(0): {(df_hard['generated']==0).sum()}개 | AI(1): {(df_hard['generated']==1).sum()}개")
 
 # 전처리된 데이터 CSV로 저장
-df_essay.to_csv('essay_clean_dataset.csv', index=False, encoding='utf-8')
-df_news.to_csv('news_clean_dataset.csv',   index=False, encoding='utf-8')
-df_hard.to_csv('hard_clean_dataset.csv',   index=False, encoding='utf-8')
+df_essay.to_csv('../data/processed/essay_clean_dataset.csv', index=False, encoding='utf-8')
+df_news.to_csv('../data/processed/news_clean_dataset.csv',   index=False, encoding='utf-8')
+df_hard.to_csv('../data/processed/hard_clean_dataset.csv',   index=False, encoding='utf-8')
 print("✅ 전처리된 CSV 저장 완료!")
 
 # 전처리 결과 예시
@@ -172,7 +172,7 @@ def visualize_words(df, title):
     axes[1][1].set_title('AI - WordCloud')
 
     plt.tight_layout()
-    plt.savefig(f'{title.lower()}_words.png', dpi=150, bbox_inches='tight')
+    plt.savefig(f'../results/figures/{title.lower()}_words.png', dpi=150, bbox_inches='tight')
     plt.show()
     print(f"✅ 저장 완료: {title.lower()}_words.png")
 
@@ -297,7 +297,7 @@ def visualize_classical(results, title, color):
         axes[1].text(i, v + 0.3, f'{v:.1f}', ha='center', fontsize=10, fontweight='bold')
 
     plt.tight_layout()
-    plt.savefig(f'{title.lower()}_classical.png', dpi=150, bbox_inches='tight')
+    plt.savefig(f'../results/figures/{title.lower()}_classical.png', dpi=150, bbox_inches='tight')
     plt.show()
 
 visualize_classical(essay_results, 'Essay',       'steelblue')
@@ -578,7 +578,7 @@ ax.set_ylabel('Accuracy (%)')
 ax.legend(title='Dataset', loc='lower right')
 
 plt.tight_layout()
-plt.savefig('final_all_models.png', dpi=150, bbox_inches='tight')
+plt.savefig('../results/figures/final_all_models.png', dpi=150, bbox_inches='tight')
 plt.show()
 
 # 결과 표
@@ -613,7 +613,7 @@ result_data.append({
 })
 
 df_results = pd.DataFrame(result_data)
-df_results.to_csv('final_results.csv', index=False, encoding='utf-8-sig')
+df_results.to_csv('../results/tables/final_results.csv', index=False, encoding='utf-8-sig')
 print("✅ 최종 결과 CSV 저장 완료: final_results.csv")
 print("✅ 시각화 이미지 저장 완료: final_all_models.png")
 print()
