@@ -37,9 +37,9 @@ from transformers import DistilBertTokenizer, DistilBertForSequenceClassificatio
 from torch.utils.data import Dataset, DataLoader                                         # 데이터를 배치로 나눠주는 도구
 from torch.optim import AdamW                                                            # 모델 학습 최적화 도구
 
-print("✅ 모든 라이브러리 로드 완료!")
+print("모든 라이브러리 로드 완료")
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')                    # GPU(그래픽카드)가 있으면 GPU를, 없으면 CPU를 사용한다.
-print(f"✅ 사용 디바이스: {device}")
+print(f"사용 디바이스: {device}")
 
 # ------------------------------------------------------------------------------------------------------------------------------------------------ #
 
@@ -65,14 +65,14 @@ def clean_text(text):##text함수 정의
     text = re.sub(r'[^a-z\s]', '', text)##숫자, 특수문자 제거 후 알파벳과 공백만 남긴다
     # 불용어 제거 + 어간 추출
     tokens = [
-        lemmatizer.lemmatize(word)
+        lemmatizer.lemmatize(word)##어간 추출, 1번 과정에서 불러온 어간 추출 도구를 이용해서 running -> run등, 단어를 원래의 형태로 되돌린다
         for word in text.split()##문장을 단어 단위로 쪼갠다
         if word not in stop_words and len(word) > 2##1번 과정에서 불러온 stopwords(is, my등 의미없는 단어를 포함)라이브러리에 해당하는 단어가 있는지 확인 후
         ##일치하는 단어가 있는 경우 제거한다 and 길이가 2 이하인 단어는 제거한다(ai 등)
     ]
-    return ' '.join(tokens)##전처리된 함수를 return
+    return ' '.join(tokens)##위의 과정의 완료된 단어 리스트를 다시 문장으로 합쳐서 반환한다(전처리된 문장을 반환한다)
 
-print("✅ 전처리 함수 정의 완료!")
+print("전처리 함수 정의 완료")
 
 # ------------------------------------------------------------------------------------------------------------------------------------------------ #
 
@@ -86,17 +86,17 @@ stop_words = set(stopwords.words('english'))
 lemmatizer = WordNetLemmatizer()
 
 # 에세이 데이터 전처리
-df_essay = pd.read_csv('../data/project_dataset/essay_dataset.csv', encoding='latin-1')
-df_essay['generated'] = pd.to_numeric(df_essay['generated'], errors='coerce')
-df_essay = df_essay.dropna(subset=['generated', 'text'])
-df_essay['generated'] = df_essay['generated'].astype(int)
-df_essay = df_essay[df_essay['generated'].isin([0, 1])].reset_index(drop=True)
-df_essay['clean_text'] = df_essay['text'].apply(clean_text)
-df_essay = df_essay[df_essay['clean_text'].str.split().str.len() >= 5].reset_index(drop=True)
-print(f"📄 에세이 데이터: {len(df_essay)}행")
+df_essay = pd.read_csv('../data/project_dataset/essay_dataset.csv', encoding='latin-1')##../data/..경로의 CVS파일을 읽고, df_essay라는 표에 정리한다. encoding='latin-1'은 파일에 깨진 문자로 인한 오류를 방지하는 코드
+df_essay['generated'] = pd.to_numeric(df_essay['generated'], errors='coerce')##CVS파일의 generated column이 문자열로 저장된 경우 숫자로 바꾼다(e.g. "0" -> 0 ). 변환이 불가한 경우 빈 값으로 처리한다(errors='coerce')
+df_essay = df_essay.dropna(subset=['generated', 'text'])##CVS파일의 generated또는 text column이 비어있는 행을 삭제한다
+df_essay['generated'] = df_essay['generated'].astype(int)##문자열에서 소수점 형태의 숫자로 바꾼 데이터를 정수의 형태로 바꾼다(e.g.  "0" -> 0.0 -> 0 )
+df_essay = df_essay[df_essay['generated'].isin([0, 1])].reset_index(drop=True)##generated의 값이 0 이나 1이 아닌 경우, 제거한다(e.g. 2, 3). reset_index: 삭제된 행이 있으므로 행 번호를 다시 매긴다
+df_essay['clean_text'] = df_essay['text'].apply(clean_text)##2번에서 정의한 전처리 함수를 모든 행에 적용하고 clean_text라는 새 column에 저장한다
+df_essay = df_essay[df_essay['clean_text'].str.split().str.len() >= 5].reset_index(drop=True)##전처리 후 단어가 5개 미만으로 남은 행은 삭제한다. 너무 짧으면 모델이 학습할 정보가 없다
+print(f"   에세이 데이터: {len(df_essay)}행")##전처리 후 몇 개의 행이 남았는지, ai generated, human written글이 몇 개씩 남았는지 확인한다
 print(f"   사람(0): {(df_essay['generated']==0).sum()}개 | AI(1): {(df_essay['generated']==1).sum()}개")
 
-# 뉴스 데이터 전처리
+# 뉴스 데이터 전처리(뉴스 텍스트 데이터에 대해 위의 에세이 데이터 전처리와 동일한 과정을 반복하여 뉴스데이터를 전처리한다)
 df_news = pd.read_csv('../data/project_dataset/news_dataset.csv', encoding='latin-1')
 df_news['generated'] = pd.to_numeric(df_news['generated'], errors='coerce')
 df_news = df_news.dropna(subset=['generated', 'text'])
@@ -118,11 +118,11 @@ df_hard = df_hard[df_hard['clean_text'].str.split().str.len() >= 5].reset_index(
 print(f"🔥 어려운 데이터(ChatGPT): {len(df_hard)}행")
 print(f"   사람(0): {(df_hard['generated']==0).sum()}개 | AI(1): {(df_hard['generated']==1).sum()}개")
 
-# 전처리된 데이터 CSV로 저장
+# 전처리된 데이터를 각각 새 CVS파일로 저장한다
 df_essay.to_csv('../data/processed/essay_clean_dataset.csv', index=False, encoding='utf-8')
 df_news.to_csv('../data/processed/news_clean_dataset.csv',   index=False, encoding='utf-8')
 df_hard.to_csv('../data/processed/hard_clean_dataset.csv',   index=False, encoding='utf-8')
-print("✅ 전처리된 CSV 저장 완료!")
+print("전처리된 CSV 저장 완료")
 
 # 전처리 결과 예시
 # 원본: When people are seeking advice they usually ask more than one person for help
@@ -175,7 +175,7 @@ def visualize_words(df, title):
     plt.tight_layout()
     plt.savefig(f'../results/figures/{title.lower()}_words.png', dpi=150, bbox_inches='tight')
     plt.show()
-    print(f"✅ 저장 완료: {title.lower()}_words.png")
+    print(f"저장 완료: {title.lower()}_words.png")
 
 # 에세이 단어 시각화
 visualize_words(df_essay, 'Essay')
@@ -615,8 +615,8 @@ result_data.append({
 
 df_results = pd.DataFrame(result_data)
 df_results.to_csv('../results/tables/final_results.csv', index=False, encoding='utf-8-sig')
-print("✅ 최종 결과 CSV 저장 완료: final_results.csv")
-print("✅ 시각화 이미지 저장 완료: final_all_models.png")
+print("최종 결과 CSV 저장 완료: final_results.csv")
+print("시각화 이미지 저장 완료: final_all_models.png")
 print()
 print(df_results.to_string(index=False))
 
