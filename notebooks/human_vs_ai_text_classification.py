@@ -115,7 +115,7 @@ df_hard['generated'] = df_hard['generated'].astype(int)
 df_hard = df_hard[df_hard['generated'].isin([0, 1])].reset_index(drop=True)
 df_hard['clean_text'] = df_hard['text'].apply(clean_text)
 df_hard = df_hard[df_hard['clean_text'].str.split().str.len() >= 5].reset_index(drop=True)
-print(f"🔥 어려운 데이터(ChatGPT): {len(df_hard)}행")
+print(f"   어려운 데이터(ChatGPT): {len(df_hard)}행")
 print(f"   사람(0): {(df_hard['generated']==0).sum()}개 | AI(1): {(df_hard['generated']==1).sum()}개")
 
 # 전처리된 데이터를 각각 새 CVS파일로 저장한다
@@ -133,58 +133,59 @@ print("전처리된 CSV 저장 완료")
 
 
 ## 4. 에세이, 뉴스, 어려운 데이터의 단어 빈도 시각화
-### 사람이 쓴 글과 AI가 쓴 글에서 자주 등장하는 단어를 시각화합니다.
-#### 이를 통해 사람 글과 AI 글의 단어 패턴 차이를 직관적으로 확인할 수 있습니다.
+### 사람이 쓴 글과 AI가 쓴 글에서 자주 등장하는 단어를 시각화한다
+#### 이과정으로 ai generated, human written 글의 단어 패턴 차이를 직관적으로 확인할 수 있다
 
 
-def visualize_words(df, title):
+def visualize_words(df, title):##df(데이터), title(essay, news, hard)를 입력받는 함수, 각 데이터의 단어 빈도를 시각화한다
     """사람 글과 AI 글의 단어 빈도를 시각화합니다."""
-    human_words = ' '.join(df[df['generated']==0]['clean_text'].dropna()).split()
-    ai_words    = ' '.join(df[df['generated']==1]['clean_text'].dropna()).split()
+    human_words = ' '.join(df[df['generated']==0]['clean_text'].dropna()).split()##사람 글만 필터링->clean_text 컬럼 가져오기 -> 빈 값을 제거 -> 모든 글을 하나의 긴 문자열로 합치기 -> 긴 문자열을 단어 하나하나로 쪼개서 human_words에 저장
+    ai_words    = ' '.join(df[df['generated']==1]['clean_text'].dropna()).split()##ai글에 대해 위의 코드와 같은 처리를 반복
 
-    print(f"사람 단어 수: {len(human_words):,}  |  AI 단어 수: {len(ai_words):,}")
+    print(f"사람 단어 수: {len(human_words):,}  |  AI 단어 수: {len(ai_words):,}")## 전체 단어가 몇 개인지 각각 출력. :, -> 숫자 천 단위에 쉼표 붙여주는 옵션
 
-    human_top = Counter(human_words).most_common(20)
-    ai_top    = Counter(ai_words).most_common(20)
+    human_top = Counter(human_words).most_common(20)##사람 글에서 개수가 가장 많은 단어를 20개 추출
+    ai_top    = Counter(ai_words).most_common(20)##ai글에서 개수가 가장 많은 단어를 20개 추출
 
-    fig, axes = plt.subplots(2, 2, figsize=(18, 12))
-    fig.suptitle(f'{title} - Word Frequency Analysis', fontsize=16, fontweight='bold')
+    fig, axes = plt.subplots(2, 2, figsize=(18, 12))##그래프 틀 만들기
+    fig.suptitle(f'{title} - Word Frequency Analysis', fontsize=16, fontweight='bold')##그래프 이름 설정
 
-    words, counts = zip(*human_top)
+    ##막대 그래프 그리기
+    words, counts = zip(*human_top)##단어와 개수를 분리
     axes[0][0].barh(words[::-1], counts[::-1], color='steelblue')
     axes[0][0].set_title('Human - Top 20 Words')
     axes[0][0].set_xlabel('Count')
 
-    words, counts = zip(*ai_top)
+    words, counts = zip(*ai_top)##단어와 개수를 분리
     axes[0][1].barh(words[::-1], counts[::-1], color='tomato')
     axes[0][1].set_title('AI - Top 20 Words')
     axes[0][1].set_xlabel('Count')
 
     wc_human = WordCloud(width=800, height=400, background_color='white',
-                         colormap='Blues').generate(' '.join(human_words))
+                         colormap='Blues').generate(' '.join(human_words))##워드 클라우드 설정, 이미지 크기, 배경 색 등 설정
     axes[1][0].imshow(wc_human, interpolation='bilinear')
     axes[1][0].axis('off')
     axes[1][0].set_title('Human - WordCloud')
 
     wc_ai = WordCloud(width=800, height=400, background_color='white',
-                      colormap='Reds').generate(' '.join(ai_words))
+                      colormap='Reds').generate(' '.join(ai_words))##워드 클라우드 설정
     axes[1][1].imshow(wc_ai, interpolation='bilinear')
     axes[1][1].axis('off')
     axes[1][1].set_title('AI - WordCloud')
 
-    plt.tight_layout()
-    plt.savefig(f'../results/figures/{title.lower()}_words.png', dpi=150, bbox_inches='tight')
-    plt.show()
+    plt.tight_layout()##그래프가 겹치지 않게 간격 조정
+    plt.savefig(f'../results/figures/{title.lower()}_words.png', dpi=150, bbox_inches='tight')##파일로 저장
+    plt.show()##화면에 그래프 출력
     print(f"저장 완료: {title.lower()}_words.png")
 
 # 에세이 단어 시각화
-visualize_words(df_essay, 'Essay')
+visualize_words(df_essay, 'Essay')##위에서 정의한 visualize_words(시각화 함수)를 에세이에 적용
 
 # 뉴스 단어 시각화
-visualize_words(df_news, 'News')
+visualize_words(df_news, 'News')##위에서 정의한 visualize_words(시각화 함수)를 뉴스에 적용
 
 # 어려운 데이터 단어 시각화
-visualize_words(df_hard, 'Hard')
+visualize_words(df_hard, 'Hard')##위에서 정의한 visualize_words(시각화 함수)를 어려운 데이터에 적용
 
 # ------------------------------------------------------------------------------------------------------------------------------------------------ #
 
