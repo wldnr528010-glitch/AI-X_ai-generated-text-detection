@@ -91,7 +91,7 @@ df_essay['generated'] = pd.to_numeric(df_essay['generated'], errors='coerce')##C
 df_essay = df_essay.dropna(subset=['generated', 'text'])##CVS파일의 generated또는 text column이 비어있는 행을 삭제한다
 df_essay['generated'] = df_essay['generated'].astype(int)##문자열에서 소수점 형태의 숫자로 바꾼 데이터를 정수의 형태로 바꾼다(e.g.  "0" -> 0.0 -> 0 )
 df_essay = df_essay[df_essay['generated'].isin([0, 1])].reset_index(drop=True)##generated의 값이 0 이나 1이 아닌 경우, 제거한다(e.g. 2, 3). reset_index: 삭제된 행이 있으므로 행 번호를 다시 매긴다
-df_essay['clean_text'] = df_essay['text'].apply(clean_text)##2번에서 정의한 전처리 함수를 모든 행에 적용하고 clean_text라는 새 column에 저장한다
+df_essay['clean_text'] = df_essay['text'].apply(clean_text)##2번에서 정의한 전처리 함수를 모든 행에 적용하고 clean_text라는 새 column에 저장한다. 기존 텍스트는 그대로 두고, 같은 파일에 전처리된 결과를 새로운 컬럼(clean_tex)를 만들어 추가한다
 df_essay = df_essay[df_essay['clean_text'].str.split().str.len() >= 5].reset_index(drop=True)##전처리 후 단어가 5개 미만으로 남은 행은 삭제한다. 너무 짧으면 모델이 학습할 정보가 없다
 print(f"   에세이 데이터: {len(df_essay)}행")##전처리 후 몇 개의 행이 남았는지, ai generated, human written글이 몇 개씩 남았는지 확인한다
 print(f"   사람(0): {(df_essay['generated']==0).sum()}개 | AI(1): {(df_essay['generated']==1).sum()}개")
