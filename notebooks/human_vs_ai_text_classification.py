@@ -49,8 +49,8 @@ print(f"✅ 사용 디바이스: {device}")
 ## 2. 데이터 파일 전처리 함수 정의: 컴퓨터가 읽기 좋게 글을 정리할 수 있는 함수 정의(특수문자, 소문자 변환, 필요없는 단어 삭제)
 
 
-def clean_text(text):                  
-    if not isinstance(text, str):
+def clean_text(text):##text함수 정의                  
+    if not isinstance(text, str):##텍스트가 문자열이 아닌 경우(숫자, 빈 값 등), 빈 문자열을 반환한다(오류 방지)
         return ""
     # 깨진 문자 치환
     text = text.replace('\u2018', "'").replace('\u2019', "'")
@@ -58,18 +58,19 @@ def clean_text(text):
     text = text.replace('\u2014', '-').replace('\u2013', '-')
     text = text.replace('\u00A0', ' ').replace('\u2026', '...')
     # ASCII 범위 밖 문자 제거
-    text = re.sub(r'[^\x00-\x7F]', '', text)
+    text = re.sub(r'[^\x00-\x7F]', '', text)##영어, 숫자, 기본 기호 외의 모든 문자 제거(이모지, 한자 등)
     # 소문자 변환
-    text = text.lower()
+    text = text.lower()##대소문자가 다르면 같은 단어를 다른 단어로 인식하게된다. 대문자->소문자 변환 필요
     # 알파벳과 공백만 남기기
-    text = re.sub(r'[^a-z\s]', '', text)
+    text = re.sub(r'[^a-z\s]', '', text)##숫자, 특수문자 제거 후 알파벳과 공백만 남긴다
     # 불용어 제거 + 어간 추출
     tokens = [
         lemmatizer.lemmatize(word)
-        for word in text.split()
-        if word not in stop_words and len(word) > 2
+        for word in text.split()##문장을 단어 단위로 쪼갠다
+        if word not in stop_words and len(word) > 2##1번 과정에서 불러온 stopwords(is, my등 의미없는 단어를 포함)라이브러리에 해당하는 단어가 있는지 확인 후
+        ##일치하는 단어가 있는 경우 제거한다 and 길이가 2 이하인 단어는 제거한다(ai 등)
     ]
-    return ' '.join(tokens)
+    return ' '.join(tokens)##전처리된 함수를 return
 
 print("✅ 전처리 함수 정의 완료!")
 
