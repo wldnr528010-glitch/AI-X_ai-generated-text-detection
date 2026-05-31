@@ -335,7 +335,7 @@ Essay나 News에서는 Human과 AI의 핵심 단어가 상당히 달라서 TF-ID
 #### Essay Dataset
 
 ![Essay Classical Models](results/figures/essay_classical.png)
-그래프에서 볼 수 있듯 Accuracy와 F1-score가 거의 동일한 수치를 보인다. 이는 모델이 Human과 AI 텍스트를 균형 있게 잘 분류하고 있다는 의미다. 특히 XGBoost가 97.8%로 가장 높은 성능을 보였고, Naive Bayes가 95.9%로 가장 낮았다.
+그래프에서 볼 수 있듯 Accuracy와 F1-score가 동일한 수치를 보인다. 이는 모델이 Human과 AI 텍스트를 균형 있게 잘 분류하고 있다는 의미다. 특히 XGBoost가 97.8%로 가장 높은 성능을 보였고, Naive Bayes가 95.9%로 가장 낮았다.
 Naive Bayes가 상대적으로 낮은 이유는 구조적으로 설명할 수 있다. Naive Bayes는 각 단어가 서로 독립적이라고 가정(Naive 가정)하고 등장 확률만으로 분류한다. 그런데 실제 텍스트에서 단어들은 독립적이지 않다. electoral과 college는 함께 등장하는 경우가 많고, additionally와 furthermore도 AI 텍스트에서 패턴을 이루며 나타난다. 코드에서 ngram_range=(1,2)로 bigram까지 포함했지만, Naive Bayes의 독립 가정이 이러한 단어 간 관계를 온전히 반영하지 못하는 한계가 있다.
 
 #### News Dataset
