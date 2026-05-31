@@ -8,6 +8,9 @@ Essay와 News는 main experiment에 사용되었고, Hard dataset은 additional 
 
 ---
 
+## 0. Datasets
+데이터 셋 구성
+---
 ## 1. Purpose of Processed Data
 
 원본 텍스트 데이터는 그대로 모델 학습에 사용하기 어렵다.  
