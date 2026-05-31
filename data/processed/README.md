@@ -9,7 +9,21 @@ Essay와 News는 main experiment에 사용되었고, Hard dataset은 additional 
 ---
 
 ## 0. Datasets
-데이터 셋 구성
+
+본 프로젝트에서는 세 가지 데이터셋을 사용하였다.
+|Dataset|Human-written|Ai-generated|Total|Usage|
+|---|---|---|---|---|
+|Essay|2500|2500|5000|Main Experiment|
+|News|2500|2500|5000|Main Experiment|
+|Hard| - | - | - |Additional Experiment|
+
+Essay와 News는 장르별 Ai탐지 성능을 확인하기 위한 데이터셋이다
+Hard는 ChatGPT가 생성한 텍스트를 포함하고 있어, 더 어려운 조건에서 모델 성능을 확인하기 위한 추가 실험 데이터셋으로 활용하였다.
+
+Essay와 News는 문체의 특성이 서로 다르기 때문에 하나로 합치지 않고 각각 독립적인 분류 문제로 설계하였다.
+Essay는 개인의 경험, 주장, 감정 표현이 많이 나타나는 반면, News는 객관적이고 형식적인 문장 구조를 가지는 경우가 많다.
+Essay와 News데이터를 합쳐서 학습시킬 경우, 모델이 Ai여부가 아닌 장르차이를 학습할 가능성이 있어 이를 방지하였다.
+
 ---
 ## 1. Purpose of Processed Data
 
@@ -17,6 +31,11 @@ Essay와 News는 main experiment에 사용되었고, Hard dataset은 additional 
 텍스트 안에는 대소문자 차이, 특수문자, 불필요한 공통 단어, 깨진 문자 등이 포함되어 있을 수 있기 때문이다.
 
 따라서 본 프로젝트에서는 원본 텍스트를 모델이 학습하기 쉬운 형태로 정리한 뒤, 전처리된 데이터를 별도로 저장하였다.
+전처리 전후 예시는 다음과 같다
+
+`Before` "Furthermore, it's worth nothing that students' running habits - café visits & social media usage..."
+
+`After`  "furthermore worth note student run habit visit social medium use"
 
 전처리된 데이터는 모델 학습과 시각화 분석에 사용된다.
 
@@ -60,6 +79,7 @@ Label의 의미는 다음과 같다.
 | 1 | AI-generated text |
 
 `text` 컬럼은 원본 문장을 보존하기 위한 컬럼이고, `clean_text` 컬럼은 실제 모델 학습에 사용되는 전처리 결과이다.
+label은 'generated' 컬럼에 저장되어 있으며, 전처리 과정에서 0과 1 이외의 값은 제거한다.
 
 ---
 
