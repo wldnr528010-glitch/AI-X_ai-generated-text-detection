@@ -340,7 +340,7 @@ IDF (Inverse Document Frequency) : 전체 문서 중에서 그 단어가 얼마�
 ![Essay Word Frequency](results/figures/essay_words.png)
 Essay 데이터에서 Human의 Top 20 단어를 보면 people, car, would, vote, venus, could, like, get 등 구어체적이고 개인적인 표현이 많이 등장한다. Human WordCloud에서도 people, way, life, better, thing, see, even 같은 일상적인 단어들이 크게 나타난다.
 반면 AI의 Top 20 단어에는 important, community, individual, example, may, help, provide가 등장하고, AI WordCloud에서는 additionally, furthermore, electoral college, limiting, provide, experience 같은 단어가 두드러진다.
-이 차이를 법조동사(modal verb) 수준에서 더 구체적으로 확인할 수 있다. 실제 데이터를 분석해보면 Human은 would를 AI보다 4.2배, could를 2.4배 더 많이 사용하는 반면, AI는 may를 Human보다 2배 더 많이 사용한다. Human 학생은 "I would say", "this would help"처럼 구어체적 가정·추측 표현을 즐겨 쓰는 반면, AI는 "this may provide", "it may be"처럼 격식적 가능성 표현을 선호한다. 또한 additionally는 AI가 Human보다 30.7배, furthermore는 8.4배 더 자주 사용한다.
+이 차이를 법조동사(modal verb) 수준에서 더 구체적으로 확인할 수 있다. 실제 데이터를 분석해보면 Human은 would를 AI보다 4.8배, could를 2.7배 더 많이 사용하는 반면, AI는 may를 Human보다 1.8배 더 많이 사용한다. Human 학생은 "I would say", "this would help"처럼 구어체적 가정·추측 표현을 즐겨 쓰는 반면, AI는 "this may provide", "it may be"처럼 격식적 가능성 표현을 선호한다. 또한 additionally는 AI가 Human보다 26.8배, furthermore는 7.3배 더 자주 사용한다.
 한 가지 주의할 점이 있다. Human Top 20에서 venus가 눈에 띄게 등장하는데, 이는 AI 글쓰기 특성의 차이라기보다 데이터 수집 과정에서의 프롬프트 불균형 때문으로 보인다. 실제 데이터를 확인하면 venus가 포함된 텍스트가 Human 275개 대비 AI 26개로 10.6:1의 불균형을 보인다. AI 데이터 수집 시 venus 관련 프롬프트가 충분히 포함되지 않은 것이다. 따라서 모델이 venus를 Human의 신호로 학습했다면, 이는 AI 탐지 능력이 아니라 프롬프트 편향을 학습한 것일 수 있다.
 그럼에도 불구하고 전체적인 어휘 패턴 차이—Human의 구어체·가정 표현과 AI의 격식체·연결어—는 TF-IDF가 두 클래스를 구분하기에 충분한 신호를 제공하며, 이것이 Essay에서 고전 모델들이 95~98% 수준의 높은 성능을 보인 근거가 된다.
 
