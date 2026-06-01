@@ -158,21 +158,32 @@ TF-IDF 기반 고전 머신러닝 모델의 한계와 BERT 기반 모델의 장�
 
 ## Methodology
 
-전체 분석 과정은 다음과 같다.
+아래 표는 본 프로젝트의 전체 분석 흐름을 요약한 것이다.  
+각 단계의 자세한 코드 구조, 함수 설명, 모델 학습 과정은 [`notebooks/README.md`](notebooks/README.md)에 정리하였다.
 
-1. Dataset loading
-2. Text preprocessing
-3. Word frequency analysis
-4. TF-IDF vectorization
-5. Classical machine learning model training
-6. BERT-based model training
-7. Model performance comparison
-8. Result visualization
+또한 데이터 전처리와 processed data에 대한 자세한 설명은 [`data/processed/README.md`](data/processed/README.md)에 따로 정리하였다.  
+해당 문서에서는 전처리된 데이터의 의미, `clean_text` 컬럼의 역할, 전처리 파일 생성 방식, 
+그리고 GitHub 업로드 용량 제한으로 일부 processed data가 업로드되지 않은 이유를 설명한다.
+
+| 번호 | 섹션 | 내용 |
+|---:|---|---|
+| 0 | Dataset | Essay, News, Hard 세 가지 데이터를 준비하고 각 데이터셋의 역할을 구분한다. |
+| 1 | Library Loading | 분석에 필요한 Python 라이브러리를 불러온다. |
+| 2 | Preprocessing Function | 텍스트를 정리하기 위한 `clean_text()` 함수를 정의한다. |
+| 3 | Dataset Loading | Essay, News, Hard 원본 데이터를 코드로 불러온다. |
+| 4 | Preprocessing Application | 각 데이터셋에 전처리 함수를 적용하고 `clean_text` 컬럼을 생성한다. |
+| 5 | Word Frequency Visualization | Human text와 AI-generated text에서 자주 등장하는 단어를 시각화한다. |
+| 6 | Classical Model Training | TF-IDF로 텍스트를 숫자 벡터로 변환한 뒤 Logistic Regression, Naive Bayes, Random Forest, XGBoost를 학습한다. |
+| 7 | BERT Model Training | 문맥 정보를 반영할 수 있는 DistilBERT 모델을 학습한다. |
+| 8 | Performance Comparison | 각 모델의 Accuracy와 F1-score를 비교한다. |
+| 9 | Result Saving | 최종 시각화 이미지와 결과 CSV 파일을 저장한다. |
 
 
 ## Text Preprocessing
 
-데이터 전처리에 관련한 구체적인 내용은 data/proessed/README.me에 설명되어있다.
+데이터 전처리에 대한 자세한 설명은 [`data/processed/README.md`](data/processed/README.md)에 따로 정리하였다.  
+이 문서에서는 원본 데이터가 어떤 과정을 거쳐 `clean_text` 컬럼으로 변환되는지, 전처리된 파일이 어떻게 생성되는지, 
+그리고 용량 문제로 일부 processed data가 GitHub에 업로드되지 않은 이유를 확인할 수 있다.
 
 | 번호 | 섹션 | 내용 |
 |------|------|------|
