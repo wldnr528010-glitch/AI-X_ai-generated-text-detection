@@ -31,12 +31,6 @@
 
 ## Index
 
-이 README는 프로젝트의 전체 흐름을 블로그 형식으로 정리한 문서이다.  
-프로젝트의 주제, 실험 설계, 모델 비교 결과, 시각화 해석, 한계점과 향후 개선 방향을 순서대로 확인할 수 있다.
-
-자세한 코드 실행 흐름과 알고리즘 구현 방식은 `notebooks/README.md`에 정리하였다.  
-전처리된 데이터의 생성 방식, `clean_text` 컬럼의 의미, 그리고 용량 문제로 업로드되지 않은 processed data에 대한 설명은 `data/processed/README.md`에 따로 정리하였다.
-
 | Section | Description |
 |---|---|
 | [Project Overview](#project-overview) | 프로젝트를 진행하게 된 배경과 전체 목표 설명 |
@@ -56,6 +50,10 @@
 | [Limitations](#limitations) | 데이터 품질, 실험 조건, 모델 비교 방식에서의 한계점 |
 | [Future Work](#future-work) | 향후 확장 가능한 실험 방향 |
 | [References](#references) | 프로젝트에서 참고한 주요 라이브러리 문서 |
+
+자세한 코드 실행 흐름과 알고리즘 구현 방식은 `notebooks/README.md`에 정리하였다.  
+전처리된 데이터의 생성 방식, `clean_text` 컬럼의 의미, 그리고 용량 문제로 업로드되지 않은 processed data에 대한 설명은 `data/processed/README.md`에 따로 정리하였다.
+
 
 ### Additional Documentation
 
