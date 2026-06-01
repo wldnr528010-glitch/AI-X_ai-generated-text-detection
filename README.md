@@ -338,42 +338,30 @@ IDF (Inverse Document Frequency) : 전체 문서 중에서 그 단어가 얼마�
 #### Essay Dataset
 
 ![Essay Word Frequency](results/figures/essay_words.png)
-Essay 데이터에서 Human의 Top 20 단어를 보면 people, car, would, vote, venus, could, like, get 등 구어체적이고 개인적인 표현이 많이 등장한다. 
-특히 venus나 like, get처럼 비형식적인 단어가 포함된 점이 눈에 띈다. Human WordCloud에서도 people, way, life, better, thing, see, even 같은 일상적인 단어들이 크게 나타난다.
-반면 AI의 Top 20 단어에는 important, community, individual, example, may, help, provide가 등장하고, 
-AI WordCloud에서는 additionally, furthermore, electoral college, limiting, provide, experience, young 같은 단어가 두드러진다.
-
-이 차이는 명확하다. Human은 구어체와 개인적 경험 중심의 어휘를 쓰는 반면, AI는 논리적 흐름을 강조하는 연결어(additionally, furthermore)와 격식체 표현을 반복적으로 사용하는 경향이 있다. 
-TF-IDF 입장에서 이 패턴 차이는 두 클래스를 구분하는 충분한 신호가 되고, 이것이 Essay에서 고전 모델들이 95~98% 수준의 높은 성능을 보인 근거가 된다.
+Essay 데이터에서 Human의 Top 20 단어를 보면 people, car, would, vote, venus, could, like, get 등 구어체적이고 개인적인 표현이 많이 등장한다. Human WordCloud에서도 people, way, life, better, thing, see, even 같은 일상적인 단어들이 크게 나타난다.
+반면 AI의 Top 20 단어에는 important, community, individual, example, may, help, provide가 등장하고, AI WordCloud에서는 additionally, furthermore, electoral college, limiting, provide, experience 같은 단어가 두드러진다.
+이 차이를 법조동사(modal verb) 수준에서 더 구체적으로 확인할 수 있다. 실제 데이터를 분석해보면 Human은 would를 AI보다 4.2배, could를 2.4배 더 많이 사용하는 반면, AI는 may를 Human보다 2배 더 많이 사용한다. Human 학생은 "I would say", "this would help"처럼 구어체적 가정·추측 표현을 즐겨 쓰는 반면, AI는 "this may provide", "it may be"처럼 격식적 가능성 표현을 선호한다. 또한 additionally는 AI가 Human보다 30.7배, furthermore는 8.4배 더 자주 사용한다.
+한 가지 주의할 점이 있다. Human Top 20에서 venus가 눈에 띄게 등장하는데, 이는 AI 글쓰기 특성의 차이라기보다 데이터 수집 과정에서의 프롬프트 불균형 때문으로 보인다. 실제 데이터를 확인하면 venus가 포함된 텍스트가 Human 275개 대비 AI 26개로 10.6:1의 불균형을 보인다. AI 데이터 수집 시 venus 관련 프롬프트가 충분히 포함되지 않은 것이다. 따라서 모델이 venus를 Human의 신호로 학습했다면, 이는 AI 탐지 능력이 아니라 프롬프트 편향을 학습한 것일 수 있다.
+그럼에도 불구하고 전체적인 어휘 패턴 차이—Human의 구어체·가정 표현과 AI의 격식체·연결어—는 TF-IDF가 두 클래스를 구분하기에 충분한 신호를 제공하며, 이것이 Essay에서 고전 모델들이 95~98% 수준의 높은 성능을 보인 근거가 된다.
 
 
 #### News Dataset
 
 ![News Word Frequency](results/figures/news_words.png)
 
-News Human 데이터에서는 new, time, state, trump, data, york, said, county, race 등 실제 사건 기반의 구체적인 고유명사와 인용 표현이 상위에 등장한다. 
-Human WordCloud를 보면 new york, people, said, election result, united state, site navigation 등 실제 보도 기사 특유의 어휘가 강하게 나타난다.
-반면 AI News의 Top 20에는 also, community, significant, challenge, political, public, health, individual이 등장한다. 
-AI WordCloud에서는 community, individual, new york, one, many, world 등이 크게 보이는데, 뉴스 형식을 흉내내되 구체적인 사건명이나 고유명사 없이 일반적인 설명 위주로 작성된 특징이 나타난다.
-Human 뉴스에는 trump, york, said, race처럼 실제 보도 특유의 어휘가 강하게 등장하는 반면, 
-AI 생성 뉴스에는 이러한 구체적 고유명사가 거의 없고 community, significant, challenge 같은 일반적 단어가 상대적으로 더 많이 쓰인다. 
-TF-IDF 입장에서 이 차이는 Essay보다 훨씬 뚜렷한 분리 신호가 되기 때문에, News에서 고전 모델 성능이 Essay보다 전반적으로 더 높게 나온 것으로 해석할 수 있다.
+News Human 데이터에서는 new, time, state, trump, data, york, said, county, race 등 실제 사건 기반의 구체적인 고유명사와 인용 표현이 상위에 등장한다. Human WordCloud를 보면 new york, people, said, election result, united state 등 실제 보도 기사 특유의 어휘가 강하게 나타난다.
+반면 AI News의 Top 20에는 also, community, significant, challenge, political, public, health, individual이 등장한다. AI WordCloud에서는 community, individual, new york, one, many, world 등이 크게 보이는데, 뉴스 형식을 흉내내되 구체적인 사건명이나 고유명사 없이 일반적인 설명 위주로 작성된 특징이 나타난다.
+Human 뉴스에는 trump, york, said, race처럼 실제 보도 특유의 어휘가 강하게 등장하는 반면, AI 생성 뉴스에는 이러한 구체적 고유명사가 거의 없고 community, significant, challenge 같은 일반적 단어가 상대적으로 더 많이 쓰인다. 고유명사 밀도를 직접 계산해보면 Human이 AI보다 3.0배 높다.
+단, News에서 Word Frequency를 해석할 때 한 가지 중요한 점을 짚어야 한다. Human WordCloud에 site navigation, site search navigation 같은 표현이 눈에 띄는데, 이는 웹 크롤링 과정에서 뉴스 사이트의 UI 텍스트가 본문에 섞여 들어간 노이즈다. 실제로 Human 텍스트의 32.8%에 navigation이 포함되어 있는 반면, AI 텍스트에는 0.6%에 불과하다. TF-IDF 입장에서 이 노이즈 단어는 Human을 강하게 예측하는 feature가 됐을 가능성이 있으며, 이 점은 News 성능 해석 시 함께 고려해야 한다.
 
 
 #### Hard Dataset
 
 ![Hard Word Frequency](results/figures/hard_words.png)
 Hard 데이터에서는 앞의 두 데이터셋과 가장 다른 양상이 나타난다.
-Human Top 20에는 people, state, one, new, time, would, vote, like, car, said가 등장하고, 
-AI Top 20에는 also, new, state, people, one, time, life, community, student, may가 등장한다.
-
-people, state, one, new, time이 양쪽 모두의 상위권에 겹쳐서 등장한다. 
-Human WordCloud에서는 people, said, new york, electoral college, first, world가 크게 보이고, 
-AI WordCloud에서는 one, time, may, new york, community, life, experience가 크게 나타난다.
-
-Essay나 News에서는 Human과 AI의 핵심 단어가 상당히 달라서 TF-IDF가 명확한 경계를 학습할 수 있었다. 
-반면 Hard에서는 양쪽이 비슷한 단어를 공유하며, 차이는 어떤 단어를 얼마나 자주 쓰느냐의 미묘한 빈도 차이와 그 단어들이 문장 안에서 어떤 맥락으로 배치되느냐에 있다. 
-이 구조적 차이가 Hard에서 고전 모델들의 성능이 제한된 핵심 이유다.
+Human Top 20에는 people, state, one, new, time, would, vote, like, car, said가 등장하고, AI Top 20에는 also, new, state, people, one, time, life, community, student, may가 등장한다.
+people, state, one, new, time이 양쪽 모두의 상위권에 겹쳐서 등장한다. Human WordCloud에서는 people, said, new york, electoral college, first, world가 크게 보이고, AI WordCloud에서는 one, time, may, new york, community, life, experience가 크게 나타난다.
+이 패턴이 나타나는 이유는 Hard dataset의 구성에 있다. Hard는 essay(27.8%), news(27.3%), sentence/article(44.9%)의 혼합 데이터셋인데, 특히 sentence 타입(39.3%)은 CS/IT 교과서 문장(Human) vs AI가 작성한 CS 개념 설명(AI)으로 구성되어 있다. 주제 도메인이 동일하고 문장 길이도 평균 22단어로 매우 짧아, 단어 빈도만으로는 두 클래스를 구분하기 극히 어렵다. 이 구조적 차이가 Hard에서 고전 모델들의 성능이 제한된 핵심 이유다.
 
 
 ### Classical Model Performance
@@ -384,36 +372,22 @@ Essay나 News에서는 Human과 AI의 핵심 단어가 상당히 달라서 TF-ID
 #### Essay Dataset
 
 ![Essay Classical Models](results/figures/essay_classical.png)
-그래프에서 볼 수 있듯 Accuracy와 F1-score가 동일한 수치를 보인다. 
-이는 모델이 Human과 AI 텍스트를 균형 있게 잘 분류하고 있다는 의미다. 
-
-특히 XGBoost가 97.8%로 가장 높은 성능을 보였고, Naive Bayes가 95.9%로 가장 낮았다.
-Naive Bayes가 상대적으로 낮은 이유는 구조적으로 설명할 수 있다. 
-Naive Bayes는 각 단어가 서로 독립적이라고 가정(Naive 가정)하고 등장 확률만으로 분류한다. 그
-런데 실제 텍스트에서 단어들은 독립적이지 않다. electoral과 college는 함께 등장하는 경우가 많고, additionally와 furthermore도 AI 텍스트에서 패턴을 이루며 나타난다. 
-코드에서 ngram_range=(1,2)로 bigram까지 포함했지만, Naive Bayes의 독립 가정이 이러한 단어 간 관계를 온전히 반영하지 못하는 한계가 있다.
+그래프에서 볼 수 있듯 Accuracy와 F1-score가 거의 동일한 수치를 보인다. 이는 클래스가 Human 2,500개, AI 2,500개로 완벽히 균형 잡혀 있고, 모델이 두 클래스를 균형 있게 잘 분류하고 있다는 의미다. XGBoost가 97.8%로 가장 높은 성능을 보였고, Naive Bayes가 95.9%로 가장 낮았다.
+Naive Bayes가 상대적으로 낮은 이유는 구조적으로 설명할 수 있다. Naive Bayes는 각 단어가 서로 독립적이라고 가정(Naive 가정)하고 등장 확률만으로 분류한다. 그런데 실제 텍스트에서 단어들은 독립적이지 않다. electoral과 college는 함께 등장하는 경우가 많고, additionally와 furthermore도 AI 텍스트에서 패턴을 이루며 나타난다. 코드에서 ngram_range=(1,2)로 bigram까지 포함했지만, Naive Bayes의 독립 가정이 이러한 단어 간 관계를 온전히 반영하지 못하는 한계가 있다.
 
 
 #### News Dataset
 
 ![News Classical Models](results/figures/news_classical.png)
-News에서는 Logistic Regression과 XGBoost가 각각 99.1%, 99.2%로 Essay보다 높은 성능을 보였다. 
-앞서 Word Frequency 분석에서 확인했듯, News 데이터는 Human과 AI의 어휘 차이가 Essay보다 더 뚜렷하기 때문이다.
-
-흥미로운 점은 Naive Bayes가 News에서 93.7%로 Essay(95.9%)보다 오히려 낮아졌다는 것이다. 
-News Human 텍스트에는 trump, york, said, race 같은 특정 고유명사가 집중적으로 등장하는데, 
-Naive Bayes는 이러한 단어들의 등장 확률을 독립적으로 처리하다 보니 단어 간 조합 패턴을 충분히 활용하지 못한 것으로 해석할 수 있다.
+News에서는 Logistic Regression과 XGBoost가 각각 99.1%, 99.2%로 Essay보다 높은 성능을 보였다. 앞서 Word Frequency 분석에서 확인했듯 Human과 AI의 어휘 차이가 뚜렷하고, 특히 Human 텍스트에 집중된 고유명사와 인용 표현이 강력한 분류 신호로 작동했기 때문이다.
+Naive Bayes가 News에서 93.7%로 Essay(95.9%)보다 오히려 낮아진 점은 주목할 만하다. News Human 텍스트에는 trump, york, said, race 같은 특정 고유명사가 집중 등장하는데, 이 단어들은 보통 다른 단어들과 함께 맥락을 이루며 등장한다(said + 인물명, new + york 등). Naive Bayes는 이러한 단어 간 연관 패턴을 독립 가정으로 인해 충분히 활용하지 못한 것으로 해석할 수 있다.
 
 
 #### Hard Dataset
 
 ![Hard Classical Models](results/figures/hard_classical.png)
-Hard에서는 모든 고전 모델이 82~88% 수준으로 성능이 눈에 띄게 낮아졌다. 
-특히 Essay/News와 달리 Accuracy와 F1-score 사이에 미세한 차이가 나타나기 시작한다. 
-Naive Bayes의 경우 Accuracy 82.2% 대비 F1-score가 84.08%로 오히려 높은데, 이는 모델이 특정 클래스(AI)를 더 잘 맞추고 다른 클래스(Human)를 덜 맞추는 불균형한 예측 패턴이 생겼음을 시사한다.
-
-또한 흥미롭게도 Hard에서는 강력한 앙상블 모델인 XGBoost(85.9%)가 단순한 Logistic Regression(87.6%)보다 낮은 성능을 보였다. 
-이는 XGBoost가 Essay/News에서 학습한 복잡한 단어 패턴이 Hard 데이터의 분포와 맞지 않아 오히려 과적합된 방향으로 작동했을 가능성을 보여준다.
+Hard에서는 모든 고전 모델이 82~88% 수준으로 성능이 눈에 띄게 낮아졌다. 특히 Essay/News와 달리 Accuracy와 F1-score 사이에 미세한 차이가 나타나기 시작한다. Naive Bayes의 경우 Accuracy 82.2% 대비 F1-score가 84.08%로 오히려 높은데, 이는 모델이 특정 클래스(AI)를 더 잘 맞추고 다른 클래스(Human)를 덜 맞추는 불균형한 예측 패턴이 생겼음을 시사한다.
+또한 Hard에서는 강력한 앙상블 모델인 XGBoost(85.9%)가 단순한 Logistic Regression(87.6%)보다 낮은 성능을 보인 점도 흥미롭다. XGBoost는 복잡한 단어 패턴을 학습하는 데 강하지만, Hard처럼 Human/AI의 단어 분포가 겹치는 데이터에서는 그 복잡성이 오히려 노이즈를 과적합하는 방향으로 작동했을 가능성이 있다.
 
 
 
@@ -430,30 +404,24 @@ Essay, News, Hard dataset에 대해 고전 머신러닝 모델과 BERT 모델의
 Essay와 News의 성능(97.7%, 99.2%)은 고전 모델 최고치와 거의 같은 수준이지만, Hard의 성능(93.3%)이 고전 모델 Hard 최고치(87.6%)보다 5.7%p나 높아진다. 이것이 이번 실험의 핵심 발견이다. 
 
 Hard에서 고전 모델 성능이 떨어진 이유는 다음과 같다.
-고전 모델들이 사용하는 TF-IDF는 ngram_range=(1,2), max_features=10000으로 설정되어 있어 단어와 bigram의 빈도를 기반으로 벡터를 만든다. 
-이 방식은 각 단어(또는 단어 쌍)를 독립적인 feature로 취급하고, 단어들이 문장 안에서 어떤 순서와 맥락으로 배치되는지는 반영하지 못한다.
+Hard dataset의 실제 구성을 보면 essay(27.8%), news(27.3%), sentence(39.3%), article(4.5%)이 혼합되어 있다. 특히 가장 큰 비중을 차지하는 sentence 타입은 CS/IT 교과서에서 추출한 문장(Human)과 AI가 생성한 CS 개념 설명(AI)으로 이루어져 있어, 주제 도메인이 동일하고 문장 길이도 평균 22단어로 매우 짧다.
+고전 모델들이 사용하는 TF-IDF는 ngram_range=(1,2), max_features=10000으로 설정되어 있어 단어와 bigram의 빈도를 기반으로 벡터를 만든다. 이 방식은 각 단어(또는 단어 쌍)를 독립적인 feature로 취급하고, 단어들이 문장 안에서 어떤 순서와 맥락으로 배치되는지는 반영하지 못한다.
+Hard에서는 Human과 AI가 people, state, one, new, time처럼 동일한 단어를 공유하고, sentence 타입에서는 IT 용어(data, system, network)마저 양쪽에서 비슷한 빈도로 등장한다. 단어 빈도만으로는 두 클래스를 뚜렷하게 분리하기 어려운 구조적 이유가 여기에 있다. 또한 문장 단위 텍스트는 문체 패턴을 파악하기에 너무 짧아 TF-IDF가 포착할 수 있는 신호 자체가 부족하다.
 
-Hard 데이터에서 AI 텍스트는 단어 선택 자체보다는 문장의 흐름, 논리 전개 방식, 특정 표현 패턴의 반복 등 문맥 수준의 특징으로 Human과 구별된다. 
-Word Frequency 분석에서 확인했듯, 양쪽이 people, state, one, new, time 같은 단어를 공통으로 사용하기 때문에, 단어 빈도만 보는 TF-IDF 기반 모델로는 두 클래스를 뚜렷하게 분리하기 어렵다.
 
-반면에 Hard에서 BERT가 강했던 이유는 다음과 같다.
+Hard에서 BERT가 강한 이유는 다음과 같다.
 BERT(이 프로젝트에서는 DistilBERT 사용)는 구조적으로 고전 모델과 근본적으로 다른 방식으로 텍스트를 처리한다.
 TF-IDF가 "단어가 몇 번 나왔는가"를 세는 방식이라면, BERT는 Transformer의 Self-Attention 메커니즘을 통해 "이 단어가 문장 안의 다른 단어들과 어떤 관계에 있는가" 를 계산한다.
-예를 들어 "may provide significant support to the community" 라는 표현이 있을 때, TF-IDF는 may, provide, significant, support, community를 각각 독립적인 feature로 처리한다. 
-반면 BERT는 Self-Attention을 통해 may가 provide와, significant가 support와 어떤 관계를 가지는지를 계산하고, 이 단어들이 함께 등장하는 패턴을 하나의 문맥 벡터로 인코딩한다.
-
-또한 코드를 보면 BERT 학습 시 원본 text 컬럼을 사용하고, 고전 모델이 사용하는 전처리된 clean_text를 사용하지 않는다. 이는 의도적인 설계다. 
-불용어를 제거하고 lemmatization을 적용한 clean_text는 TF-IDF처럼 단어 빈도를 세는 모델에는 적합하지만, BERT는 원문 그대로의 문장 구조와 문법적 흐름까지 활용할 수 있기 때문이다.
-Hard 데이터에서 AI 텍스트는 단어 하나하나로 보면 Human과 비슷하지만, 문장을 이어가는 방식과 논증 구조가 반복적이고 규칙적인 특징을 보인다. 
-BERT의 Self-Attention은 이러한 문장 내 단어 간 관계와 위치 정보를 함께 학습하기 때문에, 단어 빈도로는 잡히지 않는 이러한 문체적 패턴을 포착할 수 있다.
+예를 들어 "may provide significant support to the community" 라는 표현이 있을 때, TF-IDF는 may, provide, significant, support, community를 각각 독립적인 feature로 처리한다. 반면 BERT는 Self-Attention을 통해 may가 provide와, significant가 support와 어떤 관계를 가지는지를 계산하고, 이 단어들이 함께 등장하는 패턴 전체를 하나의 문맥 벡터로 인코딩한다.
+또한 코드를 보면 BERT 학습 시 원본 text 컬럼을 사용하고, 고전 모델이 사용하는 전처리된 clean_text를 사용하지 않는다. 이는 의도적인 설계다. 불용어를 제거하고 lemmatization을 적용한 clean_text는 TF-IDF처럼 단어 빈도를 세는 모델에는 적합하지만, BERT는 원문 그대로의 문장 구조, 문법적 흐름, 단어 배치 패턴까지 활용할 수 있기 때문이다.
+Hard 데이터에서 AI 텍스트는 단어 하나하나로 보면 Human과 비슷하지만, 문장을 이어가는 방식과 논증 구조가 반복적이고 규칙적인 특징을 보인다. BERT의 Self-Attention은 이러한 문장 내 단어 간 관계와 위치 정보를 함께 학습하기 때문에, 단어 빈도로는 잡히지 않는 이러한 문체적 패턴을 포착할 수 있다.
 이것이 Hard에서 BERT가 Accuracy 93.3%, F1-score 93.64%로 고전 모델 최고치인 Logistic Regression(87.6%, F1 87.75%)보다 약 5.7~6%p 높은 성능을 보인 이유다.
 
-또한 News 데이터에서 Logistic Regression 99.1%, XGBoost 99.2%, BERT 99.2%라는 높은 성능이 나왔는데, 그 이유는 이미 Word Frequency 분석에서 알 수 있다.
-뉴스 기사는 사건 기반으로 작성되기 때문에, 인간 기자가 쓴 글에는 특정 인물명(trump), 지명(york), 인용 표현(said), 지역명(county) 같은 구체적 어휘가 고밀도로 나타난다. 
-반면 AI가 뉴스 형식으로 글을 작성할 때는 이러한 구체적 어휘보다 community, significant, challenge, public처럼 포괄적이고 중립적인 단어를 선택하는 경향이 있다.
-TF-IDF는 "특정 클래스에서만 집중적으로 나타나는 단어"를 포착하는 데 강하다. 
-News Human 텍스트의 trump, said, race는 AI 텍스트에서는 거의 등장하지 않기 때문에, TF-IDF 벡터 공간에서 두 클래스가 매우 명확하게 분리된다. 
-이 뚜렷한 어휘 분리가 News에서 가장 높은 성능이 나온 핵심 이유다.
+
+또한 News 데이터에서 Logistic Regression 99.1%, XGBoost 99.2%, BERT 99.2%라는 높은 성능이 나왔는데, 그 이유는 여러 가지가 복합적으로 작용했다.
+첫 번째는 어휘 차이의 뚜렷함이다. 뉴스 기사는 사건 기반으로 작성되기 때문에, 인간 기자가 쓴 글에는 특정 인물명(trump), 지명(york), 인용 표현(said), 지역명(county) 같은 구체적 어휘가 고밀도로 나타난다. 반면 AI가 뉴스 형식으로 글을 작성할 때는 community, significant, challenge, public처럼 포괄적이고 중립적인 단어를 선택하는 경향이 있다. 고유명사 밀도에서 Human이 AI보다 3.0배 높다는 수치가 이를 뒷받침한다.
+두 번째는 텍스트 길이의 구조적 차이다. News Human 텍스트는 평균 790단어이지만 표준편차가 2,049단어로 극히 불균일하고, 5,000단어 초과 텍스트 39개가 모두 Human이다. 반면 AI 텍스트는 평균 441단어에 표준편차가 117단어로 매우 균일하다. 이 차이도 TF-IDF의 분류 신호로 작동했을 수 있다.
+세 번째로, 앞서 언급했듯 Human 텍스트의 32.8%에 웹 크롤링 과정에서 발생한 navigation, slideshow 같은 노이즈가 포함되어 있고, AI 텍스트의 10.1%에는 [Insert Date] 같은 프롬프트 템플릿 잔재가 남아 있다. 이러한 노이즈가 TF-IDF의 강력한 분류 신호가 됐을 가능성을 배제할 수 없다. 즉 News의 99%+ 성능은 순수한 AI 탐지 능력만의 결과가 아닐 수 있으며, 이 점은 결과 해석 시 중요한 주의 사항이다.
 
 
 ## Conclusion
@@ -470,10 +438,9 @@ TF-IDF 기반 고전 모델 4개(Logistic Regression, Naive Bayes, Random Forest
 이는 모든 상황에서 복잡한 딥러닝 모델이 필요하지는 않음을 시사한다.
 
 둘째, 단어 빈도 패턴만으로는 구분하기 어려운 Hard dataset에서는 고전 모델의 성능이 82~88%로 제한된 반면, 문맥 정보를 활용하는 BERT는 93.3%를 기록하며 명확한 성능 우위를 보였다. 
-AI 생성 텍스트의 정교함이 높아질수록 문맥 기반 모델의 필요성이 커진다는 것을 실험적으로 확인한 셈이다.
+단, BERT는 고전 모델보다 적은 샘플과 짧은 학습 조건에서도 이 성능을 달성했다는 점에서, 학습 조건을 동일하게 맞췄을 때의 성능 차이는 더 클 것으로 예상된다.
 
-셋째, 데이터의 장르와 난이도가 모델 선택에 결정적인 영향을 미친다. 
-탐지 시스템을 설계할 때는 어떤 장르의 텍스트를 대상으로 하는지, 얼마나 정교한 AI 생성 텍스트를 다루는지에 따라 적합한 알고리즘을 선택해야 한다.
+셋째, 데이터의 장르와 난이도가 모델 선택에 결정적인 영향을 미친다. 높은 정확도 수치 자체보다 그 수치가 어떤 데이터 조건에서 나왔는지를 함께 이해하는 것이 중요하다.
 
 결론적으로, AI 생성 텍스트 탐지 문제는 단순히 "AI가 쓴 글을 잡아내는 것"이 아니라, 데이터의 특성을 이해하고 그에 맞는 표현 방식과 모델을 선택하는 문제임을 이번 프로젝트를 통해 확인하였다.
 
@@ -483,20 +450,22 @@ AI 생성 텍스트의 정교함이 높아질수록 문맥 기반 모델의 필�
 
 본 프로젝트에는 다음과 같은 한계가 있다.
 
-1. 데이터셋의 장르 편향
-Essay와 News 두 장르에 국한된 실험이기 때문에, 결과를 모든 텍스트 유형으로 일반화하기 어렵다. Blog, SNS 게시글, 학술 논문, 리뷰 등 다양한 장르에서의 성능은 별도로 검증이 필요하다.
+1. 데이터 노이즈의 분류 신호 작동 가능성
+News Human 텍스트의 32.8%에 웹 크롤링 잔재(Site Search Navigation, Slideshow 등)가 포함되어 있고, AI 텍스트의 10.1%에는 [Insert Date], [Author's Name] 같은 프롬프트 템플릿 잔재가 존재한다. 이 노이즈들이 TF-IDF의 분류 신호로 작동했을 가능성이 있으며, News 99%+ 성능의 일부는 실제 AI 탐지 능력이 아닌 데이터 품질 문제에서 기인했을 수 있다.
 
-2. 특정 생성 모델에 대한 과적합 가능성
-AI 생성 텍스트가 특정 LLM의 데이터로만 구성되어 있다면, 해당 모델의 문체적 특성에 편향되어 Claude, Gemini, LLaMA 등 다른 LLM이 생성한 텍스트에는 성능이 낮아질 수 있다.
+2. Essay 프롬프트 불균형에 의한 편향
+Essay 데이터는 특정 프롬프트(venus, mars, facial recognition 등)로 작성된 학생 글과 AI 글로 구성되는데, 프롬프트별 Human/AI 비율이 심하게 불균형하다(venus 10.6:1, mars 9.3:1). 모델이 venus, mars 같은 단어를 보고 Human으로 분류하는 건 AI 탐지 능력이 아니라 프롬프트 편향을 학습한 것일 수 있다.
 
-3. BERT와 고전 모델의 학습 조건 불일치
-코드에서 Light Version 기준으로 BERT는 sample_n=1000, epochs=2로 학습되었다. 반면 고전 모델은 전체 데이터셋(약 5,000개)을 사용했다. 즉 학습 조건이 동일하지 않기 때문에, BERT와 고전 모델의 성능 차이를 순수하게 알고리즘의 차이로만 해석하기에는 주의가 필요하다. 만약 BERT도 전체 샘플로 더 많은 epoch을 학습했다면 Hard에서의 성능 차이는 더 컸을 가능성이 있다.
+3. Hard dataset의 label 충돌
+Hard dataset에서 동일한 문장이 Human(0)과 AI(1)로 동시에 labeling된 텍스트가 3건 존재한다. 규모는 작지만 데이터 품질 이슈로, 이 텍스트들은 모델이 어느 쪽으로 예측해도 틀리게 된다.
 
-4. 텍스트 길이 변수
-BERT는 max_length=128로 토큰을 잘라내기 때문에, 긴 텍스트에서는 뒷부분 정보가 손실된다. 텍스트 길이 분포 차이가 성능에 영향을 미쳤을 가능성이 있다.
+4. BERT와 고전 모델의 학습 조건 불일치
+Light Version 기준으로 BERT는 sample_n=1000, epochs=2로 학습되었고, 고전 모델은 전체 5,000개를 사용했다. 즉 학습 데이터 수가 5배 차이 난다. 또한 Essay 99%, News 88%의 텍스트가 BERT의 max_length=128을 초과하여 잘린다. 이 두 조건이 복합적으로 작용하여 Essay에서 BERT(97.7%)가 XGBoost(97.8%)보다 오히려 낮게 나온 것으로 해석할 수 있다. 조건을 동일하게 맞췄다면 BERT의 성능 우위가 더 뚜렷했을 가능성이 있다.
 
-5. Hard dataset의 실험 조건 차이
-Hard dataset은 Essay/News main experiment와 완전히 동일한 조건의 실험이 아니다. 데이터 구성 방식과 난이도 기준이 다르기 때문에, Essay/News 결과와 직접 비교하여 해석하는 데는 주의가 필요하다.
+5. 데이터셋의 장르 편향
+Essay와 News 두 장르에 국한된 실험이기 때문에 결과를 모든 텍스트 유형으로 일반화하기 어렵다. Blog, SNS 게시글, 학술 논문, 리뷰 등 다양한 장르에서의 성능은 별도로 검증이 필요하다.
+특정 생성 모델에 대한 과적합 가능성
+AI 생성 텍스트가 특정 LLM의 데이터로만 구성되어 있다면, Claude, Gemini, LLaMA 등 다른 LLM이 생성한 텍스트에는 성능이 낮아질 수 있다.
 
 
 
