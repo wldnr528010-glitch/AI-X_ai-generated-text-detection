@@ -113,6 +113,11 @@ Label은 다음과 같이 정의하였다.
 Essay와 News 데이터는 장르별 AI 탐지 성능을 비교하기 위한 핵심 데이터셋으로 사용하였다.  
 Hard dataset은 모델이 더 어려운 조건에서도 안정적으로 작동하는지 확인하기 위한 추가 실험 데이터셋으로 활용하였다.
 
+essay_dataset: 원본데이터 28000건 중 5000건 사용 (https://www.kaggle.com/datasets/sunilthite/llm-detect-ai-generated-text-dataset/data)
+news_dataset: 원본데이터 58000건 중 5000건 사용 (https://huggingface.co/datasets/gsingh1-py/train)
+hard_dataset: 원본데이터 8360건 중 2247건 사용 (2753건은 에세이, 뉴스 데이터에서 사용) 
+(https://www.kaggle.com/datasets/mahdimaktabdar/chatgpt-classification-dataset)
+
 
 ## Project Design
 
