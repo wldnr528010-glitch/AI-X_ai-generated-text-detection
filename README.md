@@ -173,24 +173,18 @@ TF-IDF 기반 고전 머신러닝 모델의 한계와 BERT 기반 모델의 장�
 ## Text Preprocessing
 
 데이터 전처리에 관련한 구체적인 내용은 data/proessed/README.me에 설명되어있다.
-|0|dataset|세 가지 데이터 Essay, News, Hard|
-|1|Purpose of Processed Data|전처리의 목적과 전후 예시|
-|2|Generated Files|코드 실행 후 전처리 완료된 데이터 파일|
-|3|Data Columns|전처리된 데이터가 포함하는 정보와 Label의 의미|
-|4|Preprocessing Steps|전처리 과정|
-|5|Why Theses Preprocessing Steps?|각 전처리 과정의 목적|
-|6|File Size Limitation|파일 크기 제한으로 전처리된 News데이터는 업로드하지 않았음|
-|7|Role in the Project|모델 학습과 결과 해석의 기반인 전처리 후의 데이터|
-|8|Notes|---|
-텍스트 데이터는 모델 학습에 적합하도록 다음과 같은 전처리 과정을 거쳤다.
 
-- 결측치 제거
-- Label 값 정리
-- 소문자 변환
-- 특수문자 제거
-- 불용어 제거
-- Lemmatization
-- 너무 짧은 텍스트 제거
+| 번호 | 섹션 | 내용 |
+|------|------|------|
+| 0 | Dataset | 세 가지 데이터 Essay, News, Hard |
+| 1 | Purpose of Processed Data | 전처리의 목적과 전후 예시 |
+| 2 | Generated Files | 코드 실행 후 전처리 완료된 데이터 파일 |
+| 3 | Data Columns | 전처리된 데이터가 포함하는 정보와 Label의 의미 |
+| 4 | Preprocessing Steps | 전처리 과정 |
+| 5 | Why These Preprocessing Steps? | 각 전처리 과정의 목적 |
+| 6 | File Size Limitation | 파일 크기 제한으로 전처리된 News 데이터는 업로드하지 않았음 |
+| 7 | Role in the Project | 모델 학습과 결과 해석의 기반인 전처리 후의 데이터 |
+| 8 | Notes | 기타 참고 사항 |
 
 전처리 후 생성된 텍스트는 `clean_text` 컬럼에 저장하였다.
 
