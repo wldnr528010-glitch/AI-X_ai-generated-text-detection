@@ -175,22 +175,6 @@ BERT 모델은 문맥 정보를 반영할 수 있는 Transformer 기반 모델�
 
 Accuracy는 전체적인 분류 정확도를 보여주고, F1-score는 AI 텍스트와 Human 텍스트를 균형 있게 분류하는지 확인하는 데 사용하였다.
 
-## Results
-
-최종 실험 결과는 다음과 같다.
-
-| Model | Essay | News | Hard |
-|---|---:|---:|---:|
-| Logistic Regression | 97.6% | 99.1% | 87.6% |
-| Naive Bayes | 95.9% | 93.7% | 82.2% |
-| Random Forest | 97.7% | 97.7% | 86.9% |
-| XGBoost | 97.8% | 99.2% | 85.9% |
-| BERT | 97.7% | 99.2% | 93.3% |
-
-Essay와 News 데이터에서는 대부분의 모델이 높은 성능을 보였다. 특히 News 데이터에서는 Logistic Regression, XGBoost, BERT가 모두 높은 정확도를 보였다.
-
-Hard dataset에서는 고전 머신러닝 모델의 성능이 상대적으로 낮아졌지만, BERT는 93.3%의 정확도를 보여 더 어려운 데이터에서 강점을 보였다.
-
 
 
 ## Repository Structure
