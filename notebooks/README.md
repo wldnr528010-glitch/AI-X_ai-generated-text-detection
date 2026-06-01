@@ -69,16 +69,17 @@ from nltk.stem import WordNetLemmatizer   # 단어를 원형으로 바꿔주는 
 
 from sklearn.feature_extraction.text import TfidfVectorizer    # 글을 숫자로 변환
 from sklearn.model_selection import train_test_split           # 데이터를 학습/테스트로 분리
-from sklearn.linear_model import LogisticRegression
-from sklearn.naive_bayes import MultinomialNB
-from sklearn.ensemble import RandomForestClassifier
-from xgboost import XGBClassifier
+from sklearn.linear_model import LogisticRegression            # (고전 분류모델) 분류모델 1 (LogisticRegression)
+from sklearn.naive_bayes import MultinomialNB                  # (고전 분류모델) 분류모델 2 (naive_bayes)
+from sklearn.ensemble import RandomForestClassifier            # (고전 분류모델) 분류모델 3 (RandomForestClassifier)
+from xgboost import XGBClassifier                              # (고전 분류모델) 분류모델 4 (XGBoost)
 from sklearn.metrics import accuracy_score, f1_score           # 분류모델 성능 측정 도구
 
-import torch
-from transformers import DistilBertTokenizer, DistilBertForSequenceClassification
-from torch.utils.data import Dataset, DataLoader
-from torch.optim import AdamW
+import torch                                                                             # AI 딥러닝 연산 도구
+from transformers import DistilBertTokenizer, DistilBertForSequenceClassification        # (최신 분류 모델) BERT 모델 불러오는 도구
+from torch.utils.data import Dataset, DataLoader                                         # 데이터를 배치로 나눠주는 도구
+from torch.optim import AdamW                                                            # 모델 학습 최적화 도구
+
 ```
 
 ---
@@ -223,6 +224,8 @@ df_essay = df_essay[df_essay['clean_text'].str.split().str.len() >= 5].reset_ind
 이 분석은 모델 학습 전에 사람 글과 AI 글 사이에 단어 사용 패턴 차이가 존재하는지
 시각적으로 먼저 확인하기 위한 과정이다.
 
+
+사람 글과 AI 글에서 자주 등장하는 단어 상위 20개를 막대그래프와 WordCloud로 시각화하는 코드이다.
 ```python
 def visualize_words(df, title):
 
