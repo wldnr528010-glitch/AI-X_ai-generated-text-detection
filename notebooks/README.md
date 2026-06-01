@@ -196,10 +196,6 @@ Step 2에서 정의한 `clean_text()` 함수를 각 데이터셋에 적용하여
 
 불러온 데이터에서 빈 칸이나 이상한 값을 제거하고, STEP 2.에서 정의한 전처리 함수를 적용해 전처리된 텍스트를 clean_text 컬럼에 저장하는 코드이다.
 ```python
-# 불용어 목록과 Lemmatizer 초기화 (clean_text 함수 실행 전에 반드시 필요)
-stop_words = set(stopwords.words('english'))
-lemmatizer = WordNetLemmatizer()
-
 # 에세이 데이터 전처리
 df_essay['generated'] = pd.to_numeric(df_essay['generated'], errors='coerce')
 # generated 컬럼의 값을 숫자로 변환한다. 숫자로 바꿀 수 없는 값은 빈 칸으로 처리한다
