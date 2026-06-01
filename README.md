@@ -158,12 +158,11 @@ TF-IDF 기반 고전 머신러닝 모델의 한계와 BERT 기반 모델의 장�
 
 ## Methodology
 
-아래 표는 본 프로젝트의 전체 분석 흐름을 요약한 것이다.  
-각 단계의 자세한 코드 구조, 함수 설명, 모델 학습 과정은 [`notebooks/README.md`](notebooks/README.md)에 정리하였다.
+본 프로젝트의 메인 코드는 `notebooks/human_vs_ai_text_classification.py`에 작성되어 있다.  
+이 코드는 Essay, News, Hard dataset을 불러온 뒤, 텍스트 전처리, 단어 빈도 시각화, 모델 학습, 성능 비교, 결과 저장까지의 전체 분석 과정을 순서대로 실행한다.
 
-또한 데이터 전처리와 processed data에 대한 자세한 설명은 [`data/processed/README.md`](data/processed/README.md)에 따로 정리하였다.  
-해당 문서에서는 전처리된 데이터의 의미, `clean_text` 컬럼의 역할, 전처리 파일 생성 방식, 
-그리고 GitHub 업로드 용량 제한으로 일부 processed data가 업로드되지 않은 이유를 설명한다.
+아래 표는 메인 코드의 실행 흐름을 요약한 것이다.  
+각 단계에서 사용한 함수, 모델 학습 방식, 결과 저장 경로 등 코드에 대한 더 자세한 설명은 [`notebooks/README.md`](notebooks/README.md)에 정리하였다.
 
 | 번호 | 섹션 | 내용 |
 |---:|---|---|
