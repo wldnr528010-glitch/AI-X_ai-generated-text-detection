@@ -52,18 +52,18 @@ print(f"사용 디바이스: {device}")
 def clean_text(text):##text함수 정의                  
     if not isinstance(text, str):##텍스트가 문자열이 아닌 경우(숫자, 빈 값 등), 빈 문자열을 반환한다(오류 방지)
         return ""
-    # 깨진 문자 치환
+     # 1. 이상기호 일반 문자 변환
     text = text.replace('\u2018', "'").replace('\u2019', "'")
     text = text.replace('\u201C', '"').replace('\u201D', '"')
     text = text.replace('\u2014', '-').replace('\u2013', '-')
     text = text.replace('\u00A0', ' ').replace('\u2026', '...')
-    # ASCII 범위 밖 문자 제거
+    # 2. 영어 외 문자 제거
     text = re.sub(r'[^\x00-\x7F]', '', text)##영어, 숫자, 기본 기호 외의 모든 문자 제거(이모지, 한자 등)
-    # 소문자 변환
+    # 3. 소문자 변환
     text = text.lower()##대소문자가 다르면 같은 단어를 다른 단어로 인식하게된다. 대문자->소문자 변환 필요
-    # 알파벳과 공백만 남기기
+    # 4. 알파벳과 공백만 남기기
     text = re.sub(r'[^a-z\s]', '', text)##숫자, 특수문자 제거 후 알파벳과 공백만 남긴다
-    # 불용어 제거 + 어간 추출
+    # 5. 불용어 제거 / 6. Lemmatization
     tokens = [
         lemmatizer.lemmatize(word)##어간 추출, 1번 과정에서 불러온 어간 추출 도구를 이용해서 running -> run등, 단어를 원래의 형태로 되돌린다
         for word in text.split()##문장을 단어 단위로 쪼갠다
