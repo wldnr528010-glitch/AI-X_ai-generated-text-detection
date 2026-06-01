@@ -37,9 +37,9 @@ from transformers import DistilBertTokenizer, DistilBertForSequenceClassificatio
 from torch.utils.data import Dataset, DataLoader                                         # 데이터를 배치로 나눠주는 도구
 from torch.optim import AdamW                                                            # 모델 학습 최적화 도구
 
-print("✅ 모든 라이브러리 로드 완료!")
+print("모든 라이브러리 로드 완료")
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')                    # GPU(그래픽카드)가 있으면 GPU를, 없으면 CPU를 사용한다.
-print(f"✅ 사용 디바이스: {device}")
+print(f"사용 디바이스: {device}")
 
 # ------------------------------------------------------------------------------------------------------------------------------------------------ #
 
@@ -49,29 +49,30 @@ print(f"✅ 사용 디바이스: {device}")
 ## 2. 데이터 파일 전처리 함수 정의: 컴퓨터가 읽기 좋게 글을 정리할 수 있는 함수 정의(특수문자, 소문자 변환, 필요없는 단어 삭제)
 
 
-def clean_text(text):                  
-    if not isinstance(text, str):
+def clean_text(text):##text함수 정의                  
+    if not isinstance(text, str):##텍스트가 문자열이 아닌 경우(숫자, 빈 값 등), 빈 문자열을 반환한다(오류 방지)
         return ""
-    # 깨진 문자 치환
+     # 1. 이상기호 일반 문자 변환
     text = text.replace('\u2018', "'").replace('\u2019', "'")
     text = text.replace('\u201C', '"').replace('\u201D', '"')
     text = text.replace('\u2014', '-').replace('\u2013', '-')
     text = text.replace('\u00A0', ' ').replace('\u2026', '...')
-    # ASCII 범위 밖 문자 제거
-    text = re.sub(r'[^\x00-\x7F]', '', text)
-    # 소문자 변환
-    text = text.lower()
-    # 알파벳과 공백만 남기기
-    text = re.sub(r'[^a-z\s]', '', text)
-    # 불용어 제거 + 어간 추출
+    # 2. 영어 외 문자 제거
+    text = re.sub(r'[^\x00-\x7F]', '', text)##영어, 숫자, 기본 기호 외의 모든 문자 제거(이모지, 한자 등)
+    # 3. 소문자 변환
+    text = text.lower()##대소문자가 다르면 같은 단어를 다른 단어로 인식하게된다. 대문자->소문자 변환 필요
+    # 4. 알파벳과 공백만 남기기
+    text = re.sub(r'[^a-z\s]', '', text)##숫자, 특수문자 제거 후 알파벳과 공백만 남긴다
+    # 5. 불용어 제거 / 6. Lemmatization
     tokens = [
-        lemmatizer.lemmatize(word)
-        for word in text.split()
-        if word not in stop_words and len(word) > 2
+        lemmatizer.lemmatize(word)##어간 추출, 1번 과정에서 불러온 어간 추출 도구를 이용해서 running -> run등, 단어를 원래의 형태로 되돌린다
+        for word in text.split()##문장을 단어 단위로 쪼갠다
+        if word not in stop_words and len(word) > 2##1번 과정에서 불러온 stopwords(is, my등 의미없는 단어를 포함)라이브러리에 해당하는 단어가 있는지 확인 후
+        ##일치하는 단어가 있는 경우 제거한다 and 길이가 2 이하인 단어는 제거한다(ai 등)
     ]
-    return ' '.join(tokens)
+    return ' '.join(tokens)##위의 과정의 완료된 단어 리스트를 다시 문장으로 합쳐서 반환한다(전처리된 문장을 반환한다)
 
-print("✅ 전처리 함수 정의 완료!")
+print("전처리 함수 정의 완료")
 
 # ------------------------------------------------------------------------------------------------------------------------------------------------ #
 
@@ -85,17 +86,17 @@ stop_words = set(stopwords.words('english'))
 lemmatizer = WordNetLemmatizer()
 
 # 에세이 데이터 전처리
-df_essay = pd.read_csv('../data/project_dataset/essay_dataset.csv', encoding='latin-1')
-df_essay['generated'] = pd.to_numeric(df_essay['generated'], errors='coerce')
-df_essay = df_essay.dropna(subset=['generated', 'text'])
-df_essay['generated'] = df_essay['generated'].astype(int)
-df_essay = df_essay[df_essay['generated'].isin([0, 1])].reset_index(drop=True)
-df_essay['clean_text'] = df_essay['text'].apply(clean_text)
-df_essay = df_essay[df_essay['clean_text'].str.split().str.len() >= 5].reset_index(drop=True)
-print(f"📄 에세이 데이터: {len(df_essay)}행")
+df_essay = pd.read_csv('../data/project_dataset/essay_dataset.csv', encoding='latin-1')##../data/..경로의 CVS파일을 읽고, df_essay라는 표에 정리한다. encoding='latin-1'은 파일에 깨진 문자로 인한 오류를 방지하는 코드
+df_essay['generated'] = pd.to_numeric(df_essay['generated'], errors='coerce')##CVS파일의 generated column이 문자열로 저장된 경우 숫자로 바꾼다(e.g. "0" -> 0 ). 변환이 불가한 경우 빈 값으로 처리한다(errors='coerce')
+df_essay = df_essay.dropna(subset=['generated', 'text'])##CVS파일의 generated또는 text column이 비어있는 행을 삭제한다
+df_essay['generated'] = df_essay['generated'].astype(int)##문자열에서 소수점 형태의 숫자로 바꾼 데이터를 정수의 형태로 바꾼다(e.g.  "0" -> 0.0 -> 0 )
+df_essay = df_essay[df_essay['generated'].isin([0, 1])].reset_index(drop=True)##generated의 값이 0 이나 1이 아닌 경우, 제거한다(e.g. 2, 3). reset_index: 삭제된 행이 있으므로 행 번호를 다시 매긴다
+df_essay['clean_text'] = df_essay['text'].apply(clean_text)##2번에서 정의한 전처리 함수를 모든 행에 적용하고 clean_text라는 새 column에 저장한다. 기존 텍스트는 그대로 두고, 같은 파일에 전처리된 결과를 새로운 컬럼(clean_tex)를 만들어 추가한다
+df_essay = df_essay[df_essay['clean_text'].str.split().str.len() >= 5].reset_index(drop=True)##전처리 후 단어가 5개 미만으로 남은 행은 삭제한다. 너무 짧으면 모델이 학습할 정보가 없다
+print(f"   에세이 데이터: {len(df_essay)}행")##전처리 후 몇 개의 행이 남았는지, ai generated, human written글이 몇 개씩 남았는지 확인한다
 print(f"   사람(0): {(df_essay['generated']==0).sum()}개 | AI(1): {(df_essay['generated']==1).sum()}개")
 
-# 뉴스 데이터 전처리
+# 뉴스 데이터 전처리(뉴스 텍스트 데이터에 대해 위의 에세이 데이터 전처리와 동일한 과정을 반복하여 뉴스데이터를 전처리한다)
 df_news = pd.read_csv('../data/project_dataset/news_dataset.csv', encoding='latin-1')
 df_news['generated'] = pd.to_numeric(df_news['generated'], errors='coerce')
 df_news = df_news.dropna(subset=['generated', 'text'])
@@ -114,14 +115,14 @@ df_hard['generated'] = df_hard['generated'].astype(int)
 df_hard = df_hard[df_hard['generated'].isin([0, 1])].reset_index(drop=True)
 df_hard['clean_text'] = df_hard['text'].apply(clean_text)
 df_hard = df_hard[df_hard['clean_text'].str.split().str.len() >= 5].reset_index(drop=True)
-print(f"🔥 어려운 데이터(ChatGPT): {len(df_hard)}행")
+print(f"   어려운 데이터(ChatGPT): {len(df_hard)}행")
 print(f"   사람(0): {(df_hard['generated']==0).sum()}개 | AI(1): {(df_hard['generated']==1).sum()}개")
 
-# 전처리된 데이터 CSV로 저장
+# 전처리된 데이터를 각각 새 CVS파일로 저장한다
 df_essay.to_csv('../data/processed/essay_clean_dataset.csv', index=False, encoding='utf-8')
 df_news.to_csv('../data/processed/news_clean_dataset.csv',   index=False, encoding='utf-8')
 df_hard.to_csv('../data/processed/hard_clean_dataset.csv',   index=False, encoding='utf-8')
-print("✅ 전처리된 CSV 저장 완료!")
+print("전처리된 CSV 저장 완료")
 
 # 전처리 결과 예시
 # 원본: When people are seeking advice they usually ask more than one person for help
@@ -132,58 +133,59 @@ print("✅ 전처리된 CSV 저장 완료!")
 
 
 ## 4. 에세이, 뉴스, 어려운 데이터의 단어 빈도 시각화
-### 사람이 쓴 글과 AI가 쓴 글에서 자주 등장하는 단어를 시각화합니다.
-#### 이를 통해 사람 글과 AI 글의 단어 패턴 차이를 직관적으로 확인할 수 있습니다.
+### 사람이 쓴 글과 AI가 쓴 글에서 자주 등장하는 단어를 시각화한다
+#### 이과정으로 ai generated, human written 글의 단어 패턴 차이를 직관적으로 확인할 수 있다
 
 
-def visualize_words(df, title):
+def visualize_words(df, title):##df(데이터), title(essay, news, hard)를 입력받는 함수, 각 데이터의 단어 빈도를 시각화한다
     """사람 글과 AI 글의 단어 빈도를 시각화합니다."""
-    human_words = ' '.join(df[df['generated']==0]['clean_text'].dropna()).split()
-    ai_words    = ' '.join(df[df['generated']==1]['clean_text'].dropna()).split()
+    human_words = ' '.join(df[df['generated']==0]['clean_text'].dropna()).split()##사람 글만 필터링->clean_text 컬럼 가져오기 -> 빈 값을 제거 -> 모든 글을 하나의 긴 문자열로 합치기 -> 긴 문자열을 단어 하나하나로 쪼개서 human_words에 저장
+    ai_words    = ' '.join(df[df['generated']==1]['clean_text'].dropna()).split()##ai글에 대해 위의 코드와 같은 처리를 반복
 
-    print(f"사람 단어 수: {len(human_words):,}  |  AI 단어 수: {len(ai_words):,}")
+    print(f"사람 단어 수: {len(human_words):,}  |  AI 단어 수: {len(ai_words):,}")## 전체 단어가 몇 개인지 각각 출력. :, -> 숫자 천 단위에 쉼표 붙여주는 옵션
 
-    human_top = Counter(human_words).most_common(20)
-    ai_top    = Counter(ai_words).most_common(20)
+    human_top = Counter(human_words).most_common(20)##사람 글에서 개수가 가장 많은 단어를 20개 추출
+    ai_top    = Counter(ai_words).most_common(20)##ai글에서 개수가 가장 많은 단어를 20개 추출
 
-    fig, axes = plt.subplots(2, 2, figsize=(18, 12))
-    fig.suptitle(f'{title} - Word Frequency Analysis', fontsize=16, fontweight='bold')
+    fig, axes = plt.subplots(2, 2, figsize=(18, 12))##그래프 틀 만들기
+    fig.suptitle(f'{title} - Word Frequency Analysis', fontsize=16, fontweight='bold')##그래프 이름 설정
 
-    words, counts = zip(*human_top)
+    ##막대 그래프 그리기
+    words, counts = zip(*human_top)##단어와 개수를 분리
     axes[0][0].barh(words[::-1], counts[::-1], color='steelblue')
     axes[0][0].set_title('Human - Top 20 Words')
     axes[0][0].set_xlabel('Count')
 
-    words, counts = zip(*ai_top)
+    words, counts = zip(*ai_top)##단어와 개수를 분리
     axes[0][1].barh(words[::-1], counts[::-1], color='tomato')
     axes[0][1].set_title('AI - Top 20 Words')
     axes[0][1].set_xlabel('Count')
 
     wc_human = WordCloud(width=800, height=400, background_color='white',
-                         colormap='Blues').generate(' '.join(human_words))
+                         colormap='Blues').generate(' '.join(human_words))##워드 클라우드 설정, 이미지 크기, 배경 색 등 설정
     axes[1][0].imshow(wc_human, interpolation='bilinear')
     axes[1][0].axis('off')
     axes[1][0].set_title('Human - WordCloud')
 
     wc_ai = WordCloud(width=800, height=400, background_color='white',
-                      colormap='Reds').generate(' '.join(ai_words))
+                      colormap='Reds').generate(' '.join(ai_words))##워드 클라우드 설정
     axes[1][1].imshow(wc_ai, interpolation='bilinear')
     axes[1][1].axis('off')
     axes[1][1].set_title('AI - WordCloud')
 
-    plt.tight_layout()
-    plt.savefig(f'../results/figures/{title.lower()}_words.png', dpi=150, bbox_inches='tight')
-    plt.show()
-    print(f"✅ 저장 완료: {title.lower()}_words.png")
+    plt.tight_layout()##그래프가 겹치지 않게 간격 조정
+    plt.savefig(f'../results/figures/{title.lower()}_words.png', dpi=150, bbox_inches='tight')##파일로 저장
+    plt.show()##화면에 그래프 출력
+    print(f"저장 완료: {title.lower()}_words.png")
 
 # 에세이 단어 시각화
-visualize_words(df_essay, 'Essay')
+visualize_words(df_essay, 'Essay')##위에서 정의한 visualize_words(시각화 함수)를 에세이에 적용
 
 # 뉴스 단어 시각화
-visualize_words(df_news, 'News')
+visualize_words(df_news, 'News')##위에서 정의한 visualize_words(시각화 함수)를 뉴스에 적용
 
 # 어려운 데이터 단어 시각화
-visualize_words(df_hard, 'Hard')
+visualize_words(df_hard, 'Hard')##위에서 정의한 visualize_words(시각화 함수)를 어려운 데이터에 적용
 
 # ------------------------------------------------------------------------------------------------------------------------------------------------ #
 
@@ -307,8 +309,6 @@ visualize_classical(hard_results,  'Hard', 'gray')
 # ------------------------------------------------------------------------------------------------------------------------------------------------ #
 
 
-############### 최신 모델 학습하는 코드로 돌리면 30분 넘게 걸리십니다. 돌리지 마세요 !!! ###############
-############### 간단하게 확인하고 싶으시면, 7-1번 코드 실행하세요 !!! ###############
 
 
 ## 7. 최신 모델 BERT 학습
@@ -419,116 +419,6 @@ bert_hard = run_bert(df_hard, 'Hard', epochs=3, sample_n=5000)
 # ------------------------------------------------------------------------------------------------------------------------------------------------ #
 
 
-############### 이거 돌리세요. 최신 모델 학습하는 방식으로 샘플 수를 줄였습니다. ###############
-
-
-## 7-1. 최신 모델 BERT 학습 (샘플 수 5000 -> 1000 / 및 epoch 3->2 감소)
-
-### BERT란?
-### 고전 모델들은 단어 빈도만 보지만, BERT는 문장 전체의 문맥과 의미를 이해한다.
-
-### 사용 모델
-#### DistilBERT: BERT의 경량화 버전 (속도 빠름, 성능 유사)
-
-### 학습 방법
-#### 전체 데이터의 80%(4,000개)로 학습
-#### 나머지 20%(1,000개)로 성능 테스트
-
-
-tokenizer = DistilBertTokenizer.from_pretrained('distilbert-base-uncased')
-
-class TextDataset(Dataset):
-    """BERT 학습을 위해 텍스트를 토큰으로 변환하는 클래스입니다."""
-    def __init__(self, texts, labels, max_len=128):
-        self.encodings = tokenizer(
-            list(texts), truncation=True, padding=True,
-            max_length=max_len, return_tensors='pt'
-        )
-        self.labels = torch.tensor(list(labels), dtype=torch.long)
-    def __len__(self):
-        return len(self.labels)
-    def __getitem__(self, idx):
-        return {
-            'input_ids':      self.encodings['input_ids'][idx],
-            'attention_mask': self.encodings['attention_mask'][idx],
-            'labels':         self.labels[idx]
-        }
-
-def run_bert(df, domain_name, epochs=2, sample_n=1000, max_len=128):
-    """BERT 모델을 학습하고 성능을 출력합니다."""
-    print(f"\n{'='*50}")
-    print(f"  BERT - {domain_name} 학습 시작")
-    print(f"{'='*50}")
-
-    df = df.copy()
-    df['generated'] = pd.to_numeric(df['generated'], errors='coerce')
-    df = df.dropna(subset=['generated', 'text'])
-    df['generated'] = df['generated'].astype(int)
-    df = df[df['generated'].isin([0, 1])].reset_index(drop=True)
-
-    # 샘플 수 조절
-    n = min(sample_n // 2, len(df[df['generated']==0]), len(df[df['generated']==1]))
-    df = df.groupby('generated').sample(n=n, random_state=42).reset_index(drop=True)
-    print(f"사용 샘플: {len(df)}개 (사람: {n}개, AI: {n}개)")
-
-    X_train, X_test, y_train, y_test = train_test_split(
-        df['text'], df['generated'],
-        test_size=0.2, random_state=42, stratify=df['generated']
-    )
-    print(f"학습용: {len(X_train)}개 / 테스트용: {len(X_test)}개")
-
-    train_loader = DataLoader(TextDataset(X_train.values, y_train.values, max_len), batch_size=32, shuffle=True)
-    test_loader  = DataLoader(TextDataset(X_test.values,  y_test.values,  max_len), batch_size=32)
-
-    model = DistilBertForSequenceClassification.from_pretrained(
-        'distilbert-base-uncased', num_labels=2
-    ).to(device)
-    optimizer = AdamW(model.parameters(), lr=2e-5)
-
-    for epoch in range(epochs):
-        model.train()
-        total_loss = 0
-        for batch in train_loader:
-            optimizer.zero_grad()
-            outputs = model(
-                input_ids=batch['input_ids'].to(device),
-                attention_mask=batch['attention_mask'].to(device),
-                labels=batch['labels'].to(device)
-            )
-            outputs.loss.backward()
-            optimizer.step()
-            total_loss += outputs.loss.item()
-        print(f"Epoch {epoch+1}/{epochs} - Loss: {total_loss/len(train_loader):.4f}")
-
-    model.eval()
-    all_preds, all_labels = [], []
-    with torch.no_grad():
-        for batch in test_loader:
-            outputs = model(
-                input_ids=batch['input_ids'].to(device),
-                attention_mask=batch['attention_mask'].to(device)
-            )
-            all_preds.extend(torch.argmax(outputs.logits, dim=1).cpu().numpy())
-            all_labels.extend(batch['labels'].numpy())
-
-    acc = accuracy_score(all_labels, all_preds)
-    f1  = f1_score(all_labels, all_preds)
-    print(f"\n✅ [BERT - {domain_name}]")
-    print(f"  Accuracy : {acc*100:.2f}%")
-    print(f"  F1-score : {f1*100:.2f}%")
-    return {'Accuracy': acc, 'F1-score': f1}
-
-
-# 에세이 BERT 학습 (약 2분 소요)
-bert_essay = run_bert(df_essay, 'Essay', epochs=2, sample_n=1000)
-
-# 뉴스 BERT 학습 (약 2분 소요)
-bert_news = run_bert(df_news, 'News', epochs=2, sample_n=1000)
-
-# 어려운 데이터 BERT 학습 (약 2분 소요)
-bert_hard = run_bert(df_hard, 'Hard', epochs=2, sample_n=1000)
-
-# ------------------------------------------------------------------------------------------------------------------------------------------------ #
 
 
 
@@ -614,8 +504,8 @@ result_data.append({
 
 df_results = pd.DataFrame(result_data)
 df_results.to_csv('../results/tables/final_results.csv', index=False, encoding='utf-8-sig')
-print("✅ 최종 결과 CSV 저장 완료: final_results.csv")
-print("✅ 시각화 이미지 저장 완료: final_all_models.png")
+print("최종 결과 CSV 저장 완료: final_results.csv")
+print("시각화 이미지 저장 완료: final_all_models.png")
 print()
 print(df_results.to_string(index=False))
 
