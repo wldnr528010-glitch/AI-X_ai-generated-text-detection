@@ -57,24 +57,24 @@ Hard dataset은 main experiment가 아니라 additional experiment로 사용하�
 (프로젝트 전체에서 쓸 도구들을 한꺼번에 준비하는 코드입니다. 요리 전에 재료와 도구를 꺼내는 것과 같습니다.)
 
 ```python
-import pandas as pd                     # 엑셀처럼 데이터를 표로 다루는 도구
-import re                               # 텍스트에서 특수문자 찾아 지우는 도구
-import numpy as np                      # 숫자 계산을 빠르게 해주는 도구
-import matplotlib.pyplot as plt         # 막대그래프, 선그래프 그리는 도구
-from collections import Counter         # 단어 개수를 세는 도구
-from wordcloud import WordCloud         # 단어 구름 그림 만드는 도구
+import pandas as pd                       # 엑셀처럼 데이터를 표로 다루는 도구
+import re                                 # 텍스트에서 특수문자 찾아 지우는 도구
+import numpy as np                        # 숫자 계산을 빠르게 해주는 도구
+import matplotlib.pyplot as plt           # 막대그래프, 선그래프 그리는 도구
+from collections import Counter           # 단어 개수를 세는 도구
+from wordcloud import WordCloud           # 단어 구름 그림 만드는 도구
 
 import nltk
-from nltk.corpus import stopwords       # 'the', 'is' 같은 불필요한 단어 목록
-from nltk.stem import WordNetLemmatizer # 단어를 원형으로 바꿔주는 도구 (running → run)
+from nltk.corpus import stopwords         # 'the', 'is' 같은 불필요한 단어 목록
+from nltk.stem import WordNetLemmatizer   # 단어를 원형으로 바꿔주는 도구 (running → run)
 
-from sklearn.feature_extraction.text import TfidfVectorizer  # 글을 숫자로 변환
-from sklearn.model_selection import train_test_split          # 데이터를 학습/테스트로 분리
+from sklearn.feature_extraction.text import TfidfVectorizer    # 글을 숫자로 변환
+from sklearn.model_selection import train_test_split           # 데이터를 학습/테스트로 분리
 from sklearn.linear_model import LogisticRegression
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.ensemble import RandomForestClassifier
 from xgboost import XGBClassifier
-from sklearn.metrics import accuracy_score, f1_score          # 분류모델 성능 측정 도구
+from sklearn.metrics import accuracy_score, f1_score           # 분류모델 성능 측정 도구
 
 import torch
 from transformers import DistilBertTokenizer, DistilBertForSequenceClassification
@@ -92,13 +92,12 @@ from torch.optim import AdamW
 전처리 과정은 다음과 같다.
 
 ```
-1. 깨진 문자 치환
-2. 소문자 변환
-3. 특수문자 제거
+1. 이상한 기호를 일반 문자로 변환
+2. 문자 제거
+3. 소문자 변환
 4. 알파벳과 공백만 남기기
 5. 불용어 제거
 6. Lemmatization
-7. 너무 짧은 텍스트 제거
 ```
 
 이러한 전처리를 적용한 이유는 텍스트 데이터를 모델에 바로 넣을 수는 없기 때문이다.
@@ -112,18 +111,26 @@ Lemmatization은 "running"을 "run"으로 바꾸는 것처럼 단어를 원래 �
 
 
 ```python
-def clean_text(text):
+def clean_text(text):                  
     if not isinstance(text, str):
         return ""
-    # 1. 깨진 문자 치환 - 특수 따옴표, 대시 등 비표준 문자를 일반 문자로 변환
+
+    # 1. 이상한 기호를 일반 문자로 변환
     text = text.replace('\u2018', "'").replace('\u2019', "'")
     text = text.replace('\u201C', '"').replace('\u201D', '"')
     text = text.replace('\u2014', '-').replace('\u2013', '-')
-    # 2. 소문자 변환 - "The"와 "the"를 같은 단어로 처리하기 위해
+    text = text.replace('\u00A0', ' ').replace('\u2026', '...')
+
+    # 2. 영어 외 문자 제거
+    text = re.sub(r'[^\x00-\x7F]', '', text)
+
+    # 3. 소문자 변환
     text = text.lower()
-    # 3. 특수문자 제거 + 4. 알파벳과 공백만 남기기
+
+    # 4. 알파벳과 공백만 남기기
     text = re.sub(r'[^a-z\s]', '', text)
-    # 5. 불용어 제거 + 6. Lemmatization - 단어를 원형으로 통일
+
+    # 5. 불용어 제거 / 6. Lemmatization
     tokens = [
         lemmatizer.lemmatize(word)
         for word in text.split()
@@ -132,15 +139,18 @@ def clean_text(text):
     return ' '.join(tokens)
 ```
 
+
 | 전처리 단계 | 적용 이유 |
 |---|---|
+| 이상한 기호를 일반 문자로 변환 | 따옴표, 대시 등 특수 문자가 모델 오류를 유발할 수 있어 일반 문자로 변환 |
+| 영어 외 문자 제거 | 한글, 이모지 등 영어 텍스트 분석에 불필요한 문자 제거 |
 | 소문자 변환 | "The"와 "the"를 같은 단어로 처리하기 위해 |
-| 특수문자 제거 | 의미 분류에 불필요한 노이즈 제거 |
+| 알파벳과 공백만 남기기 | 숫자, 기호 등 텍스트 분류와 무관한 문자 제거 |
 | 불용어 제거 | "the", "is" 등 분류에 도움이 되지 않는 단어 제거 |
 | Lemmatization | "running"→"run"으로 통일해 중복 카운트 방지 |
-| 짧은 텍스트 제거 | 단어 수가 너무 적으면 패턴 학습이 불가능하므로 제외 |
 
-따라서 본 프로젝트에서는 텍스트를 정리한 뒤 `clean_text` 컬럼을 생성하고, 이를 모델 학습에 사용하였다.
+
+STEP 2. 에서는 텍스트를 정리하는 전처리 함수를 정의하였으며, STEP 4. 에서 `clean_text` 컬럼을 생성하고, 이를 모델 학습에 사용하였다.
 
 ---
 
@@ -172,6 +182,10 @@ Step 2에서 정의한 `clean_text()` 함수를 각 데이터셋에 적용하여
 전처리된 텍스트를 `clean_text` 컬럼에 저장한다.
 
 ```python
+# 불용어 목록과 Lemmatizer 초기화 (clean_text 함수 실행 전에 반드시 필요)
+stop_words = set(stopwords.words('english'))
+lemmatizer = WordNetLemmatizer()
+
 # 에세이 데이터 전처리
 df_essay['generated'] = pd.to_numeric(df_essay['generated'], errors='coerce')
 # errors='coerce': 숫자로 변환 불가한 값은 빈 값(NaN)으로 처리
@@ -204,7 +218,7 @@ df_essay = df_essay[df_essay['clean_text'].str.split().str.len() >= 5].reset_ind
 
 ---
 
-## Step 5. Word Frequency Analysis
+## Step 5. Human text와 AI text의 단어 빈도 시각화
 
 전처리된 텍스트를 바탕으로 Human-written text와 AI-generated text에서
 자주 등장하는 단어를 비교하였다.
@@ -213,6 +227,7 @@ df_essay = df_essay[df_essay['clean_text'].str.split().str.len() >= 5].reset_ind
 
 ```python
 def visualize_words(df, title):
+
     # 사람 글과 AI 글의 단어를 각각 추출
     human_words = ' '.join(df[df['generated']==0]['clean_text'].dropna()).split()
     ai_words    = ' '.join(df[df['generated']==1]['clean_text'].dropna()).split()
@@ -243,9 +258,13 @@ def visualize_words(df, title):
 ../results/figures/hard_words.png
 ```
 
+실제로 시각화 결과를 보면 AI 텍스트에서는 "furthermore", "additionally", "notably" 같은
+연결 표현이 자주 등장하는 반면, Human 텍스트에서는 더 다양한 단어가 고르게 나타나는 경향이 있었다.
+이를 통해 단어 사용 패턴만으로도 AI 글과 사람 글을 어느 정도 구분할 수 있다는 가능성을 확인하였다.
+
 ---
 
-## Step 6. Classical Machine Learning Models
+## Step 6. TF-IDF 기반 고전 머신러닝 모델 학습
 
 모델을 하나만 사용하면 성능이 높게 나왔을 때 모델이 잘 학습된 건지,
 아니면 원래 구분하기 쉬운 데이터였는지 판단하기 어렵다.
@@ -347,7 +366,7 @@ y_pred = model.predict(X_test)
 
 ---
 
-## Step 7. BERT-based Model
+## Step 7. DistilBERT 기반 모델 학습
 
 고전 머신러닝 모델은 결국 단어가 몇 번 나왔는지를 보는 방식이다.
 그런데 같은 단어라도 앞뒤 문맥에 따라 의미가 달라질 수 있다.
@@ -407,17 +426,11 @@ Hard dataset처럼 구분하기 어려운 데이터에서는 BERT가 훨씬 높�
 
 ---
 
-## Step 8. Evaluation Metrics
+## Step 8. 전체 모델 성능 비교
 
 모델을 학습시킨 뒤에는 "이 모델이 얼마나 잘 작동하는가"를 숫자로 확인해야 한다.
 본 프로젝트에서는 Accuracy와 F1-score를 함께 사용하였다.
 
-```python
-from sklearn.metrics import accuracy_score, f1_score
-
-acc = accuracy_score(y_test, y_pred)  # 전체 중 맞게 예측한 비율
-f1  = f1_score(y_test, y_pred)        # Precision과 Recall의 균형 점수
-```
 
 ### Accuracy
 
@@ -446,6 +459,14 @@ Precision이 높아도 Recall이 낮으면, 또는 그 반대여도 F1-score는 
 그럼에도 두 지표를 함께 사용한 이유는, 모델이 특정 클래스에 치우쳐 예측하는 상황을 놓치지 않기 위해서다.
 Accuracy만 보고 "잘 됐다"고 판단하기보다, F1-score까지 함께 확인해야 모델 성능을 더 정확하게 평가할 수 있다고 판단하였다.
 
+
+```python
+from sklearn.metrics import accuracy_score, f1_score
+
+acc = accuracy_score(y_test, y_pred)  # 전체 중 맞게 예측한 비율
+f1  = f1_score(y_test, y_pred)        # Precision과 Recall의 균형 점수
+```
+
 | Metric | Meaning |
 |---|---|
 | Accuracy | 전체 데이터 중 모델이 올바르게 예측한 비율 |
@@ -471,7 +492,7 @@ Hard dataset에서는 BERT가 더 높은 성능을 보였다.
 
 ---
 
-## Step 9. Output Files
+## Step 9. 결과 이미지 및 CSV 저장
 
 코드를 실행하면 다음 결과물이 생성된다.
 
