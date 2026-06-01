@@ -29,7 +29,7 @@
 그리고 Essay, News, Hard dataset을 각각 어떻게 해석해야 하는지를 팀원별로 나누어 설명하였다.
 
 
-## Index
+## 🗂️ Index
 
 | Section | Description |
 |---|---|
