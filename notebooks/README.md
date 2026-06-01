@@ -98,6 +98,7 @@ from torch.optim import AdamW                                                   
 4. 알파벳과 공백만 남기기
 5. 불용어 제거
 6. Lemmatization
+7. 너무 짧은 텍스트 제거 (Step 4에서 별도 처리)
 ```
 
 이러한 전처리를 적용한 이유는 텍스트 데이터를 모델에 바로 넣을 수는 없기 때문이다.
@@ -150,9 +151,7 @@ def clean_text(text):
 | 알파벳과 공백만 남기기 | 숫자, 기호 등 텍스트 분류와 무관한 문자 제거 |
 | 불용어 제거 | "the", "is" 등 분류에 도움이 되지 않는 단어 제거 |
 | Lemmatization | "running"→"run"으로 통일해 중복 카운트 방지 |
-
-
-STEP 2. 에서는 텍스트를 정리하는 전처리 함수를 정의하였으며, STEP 4. 에서 `clean_text` 컬럼을 생성하고, 이를 모델 학습에 사용하였다.
+| 너무 짧은 텍스트 제거 | 단어 수가 너무 적으면 패턴 학습이 불가능하므로 Step 4에서 별도 처리 |
 
 ---
 
@@ -306,7 +305,7 @@ X = tfidf.fit_transform(df['clean_text'])
 y = df['generated']
 ```
 
-전체 데이터의 80%로 학습, 나머지 20%로 테스트 사용하는 코드이다.
+전체 데이터의 80%로 학습하고, 나머지 20%로 테스트하는 코드이다.
 ```python
 # 전체 데이터의 80%로 학습, 나머지 20%로 테스트
 X_train, X_test, y_train, y_test = train_test_split(
