@@ -60,7 +60,7 @@ Hard dataset은 main experiment가 아니라 additional experiment로 사용하�
 | Step 4. 전처리 적용 | Step 2에서 만든 함수를 실제 데이터에 적용해 clean_text 컬럼을 생성한다. |
 | Step 5. 단어 빈도 시각화 | 사람 글과 AI 글에서 자주 나오는 단어를 그래프로 비교한다. |
 | Step 6. 고전 모델 학습 | TF-IDF로 텍스트를 숫자로 변환 후 4가지 모델을 학습한다. |
-| Step 7. BERT 모델 학습 | 문맥을 이해하는 DistilBERT 모델을 학습한다. |
+| Step 7. 최신 모델 학습 | 문맥을 이해하는 DistilBERT 모델을 학습한다. |
 | Step 8. 성능 비교 | 모든 모델의 Accuracy와 F1-score를 비교한다. |
 | Step 9. 결과 저장 | 최종 결과 이미지와 CSV 파일을 저장한다. |
 
