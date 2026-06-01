@@ -54,7 +54,6 @@ Hard dataset은 main experiment가 아니라 additional experiment로 사용하�
 ## Step 1. 라이브러리 불러오기
 
 분석에 필요한 모든 라이브러리를 한 번에 불러온다.
-(프로젝트 전체에서 쓸 도구들을 한꺼번에 준비하는 코드입니다. 요리 전에 재료와 도구를 꺼내는 것과 같습니다.)
 
 ```python
 import pandas as pd                       # 엑셀처럼 데이터를 표로 다루는 도구
