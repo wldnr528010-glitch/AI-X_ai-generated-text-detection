@@ -92,7 +92,7 @@ from torch.optim import AdamW                                                   
 전처리 과정은 다음과 같다.
 
 ```
-1. 이상 기호 일반 문자 변환
+1. 이상기호 일반 문자 변환
 2. 영어 외 문자 제거
 3. 소문자 변환
 4. 알파벳과 공백만 남기기
@@ -118,7 +118,7 @@ def clean_text(text):
     if not isinstance(text, str):
         return ""
 
-    # 1. 이상 기호 일반 문자 변환
+    # 1. 이상기호 일반 문자 변환
     text = text.replace('\u2018', "'").replace('\u2019', "'")
     text = text.replace('\u201C', '"').replace('\u201D', '"')
     text = text.replace('\u2014', '-').replace('\u2013', '-')
@@ -145,7 +145,7 @@ def clean_text(text):
 
 | 전처리 단계 | 적용 이유 |
 |---|---|
-| 이상 기호 일반 문자 변환 | 따옴표, 대시 등 특수 문자가 모델 오류를 유발할 수 있어 일반 문자로 변환 |
+| 이상기호 일반 문자 변환 | 따옴표, 대시 등 특수 문자가 모델 오류를 유발할 수 있어 일반 문자로 변환 |
 | 영어 외 문자 제거 | 한글, 이모지 등 영어 텍스트 분석에 불필요한 문자 제거 |
 | 소문자 변환 | "The"와 "the"를 같은 단어로 처리하기 위해 |
 | 알파벳과 공백만 남기기 | 숫자, 기호 등 텍스트 분류와 무관한 문자 제거 |
@@ -538,8 +538,8 @@ Hard dataset에서는 BERT가 더 높은 성능을 보였다.
 df_results.to_csv('final_results.csv', index=False, encoding='utf-8-sig')
 ```
 
-Step 4 에서 저장
 ```
+Step 4 에서 저장
 ../data/processed/
 ├── essay_clean_dataset.csv
 ├── news_clean_dataset.csv
