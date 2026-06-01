@@ -158,14 +158,10 @@ STEP 2. 에서는 텍스트를 정리하는 전처리 함수를 정의하였으�
 코드는 프로젝트 최상위 폴더를 기준으로 실행한다고 가정한다.
 사용하는 원본 데이터 경로는 다음과 같다.
 
-```python
-df_essay = pd.read_csv('../data/project_dataset/essay_dataset.csv', encoding='latin-1')
-# encoding='latin-1': 파일에 깨진 문자로 인한 오류를 방지
-
-df_news = pd.read_csv('../data/project_dataset/news_dataset.csv', encoding='latin-1')
-
-df_hard = pd.read_csv('../data/project_dataset/hard_dataset.csv', encoding='utf-8')
-# hard dataset은 utf-8 인코딩으로 저장되어 있어 별도로 지정
+```text
+../data/project_dataset/essay_dataset.csv
+../data/project_dataset/news_dataset.csv
+../data/project_dataset/hard_dataset.csv
 ```
 
 | Label | Meaning |
