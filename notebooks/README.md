@@ -109,6 +109,8 @@ from torch.optim import AdamW
 Lemmatization은 "running"을 "run"으로 바꾸는 것처럼 단어를 원래 형태로 통일해주는 과정인데, 같은 의미의 단어가 다르게 카운트되는 걸 막기 위해 적용했다.
 
 
+텍스트 데이터를 모델 학습에 적합한 형태로 정리하는 clean_text() 함수를 정의하는 코드이다.
+이 단계에서는 함수를 정의하기만 하며, 실제 데이터에 적용하는 것은 Step 4에서 수행한다.
 ```python
 def clean_text(text):                  
     if not isinstance(text, str):
@@ -173,9 +175,10 @@ STEP 2. 에서는 텍스트를 정리하는 전처리 함수를 정의하였으�
 
 ## Step 4. 데이터 전처리 및 clean_text 생성
 
-Step 2에서 정의한 `clean_text()` 함수를 각 데이터셋에 적용하여
-전처리된 텍스트를 `clean_text` 컬럼에 저장한다.
+Step 2에서 정의한 `clean_text()` 함수를 각 데이터셋에 적용하여 전처리된 텍스트를 `clean_text` 컬럼에 저장한다.
 
+
+불러온 데이터에서 빈 칸이나 이상한 값을 제거하고, STEP 2.에서 정의한 전처리 함수를 적용해 전처리된 텍스트를 clean_text 컬럼에 저장하는 코드이다.
 ```python
 # 불용어 목록과 Lemmatizer 초기화 (clean_text 함수 실행 전에 반드시 필요)
 stop_words = set(stopwords.words('english'))
@@ -253,9 +256,27 @@ def visualize_words(df, title):
 ../results/figures/hard_words.png
 ```
 
-실제로 시각화 결과를 보면 AI 텍스트에서는 "furthermore", "additionally", "notably" 같은
-연결 표현이 자주 등장하는 반면, Human 텍스트에서는 더 다양한 단어가 고르게 나타나는 경향이 있었다.
-이를 통해 단어 사용 패턴만으로도 AI 글과 사람 글을 어느 정도 구분할 수 있다는 가능성을 확인하였다.
+세 데이터셋의 단어 빈도를 시각화한 결과, AI 텍스트와 Human 텍스트 사이에
+몇 가지 뚜렷한 차이가 나타났다.
+
+Essay 데이터에서는 Human 텍스트에 "would", "vote", "president", "get" 같은
+개인 의견이나 행동을 나타내는 단어가 많이 등장한 반면,
+AI 텍스트에서는 "student", "community", "individual", "important", "example" 같은
+보다 일반적이고 격식체적인 단어가 상위권에 많이 나타났다.
+
+News 데이터에서는 Human 텍스트에 "trump", "data", "said", "site" 같은
+구체적인 사실을 나타내는 단어가 많이 등장한 반면,
+AI 텍스트에서는 "community", "health", "significant", "challenge", "political" 같은
+보다 포괄적이고 추상적인 단어가 많이 나타났다.
+
+Hard 데이터에서는 Human과 AI의 상위 단어가 많이 겹쳤지만,
+AI 텍스트에서 "also", "community", "may", "life" 같은 단어의 비중이 상대적으로 높았고,
+Human 텍스트에서는 "would", "vote", "said", "data" 같은 단어가 더 많이 등장했다.
+
+전반적으로 Human 텍스트는 구체적이고 다양한 단어를 사용하는 경향이 있었고,
+AI 텍스트는 일반적이고 포괄적인 단어를 반복적으로 사용하는 경향이 있었다.
+이를 통해 단어 사용 패턴만으로도 AI 글과 사람 글을 어느 정도 구분할 수 있다는
+가능성을 확인하였다.
 
 ---
 
@@ -278,7 +299,10 @@ TF-IDF(Term Frequency-Inverse Document Frequency)는 단어의 중요도를 수�
 tfidf = TfidfVectorizer(max_features=10000, ngram_range=(1,2))
 X = tfidf.fit_transform(df['clean_text'])
 y = df['generated']
+```
 
+전체 데이터의 80%로 학습, 나머지 20%로 테스트 사용한다.
+```python
 # 전체 데이터의 80%로 학습, 나머지 20%로 테스트
 X_train, X_test, y_train, y_test = train_test_split(
     X, y, test_size=0.2, random_state=42, stratify=y
@@ -377,6 +401,10 @@ BERT는 문장 전체의 흐름을 양방향으로 읽어서 단어의 문맥까
 DistilBERT는 BERT보다 가볍고 빠르게 학습할 수 있으면서도
 문맥 정보를 반영하는 능력은 충분히 유지하고 있어 이번 프로젝트에 적합하다고 판단하였다.
 
+
+BERT는 텍스트를 그대로 이해하지 못하고 숫자만 읽을 수 있다.
+이 코드는 단어를 숫자로 바꿔주는 번역기(토크나이저)를 준비하고, 모든 문장을 128개 단어 길이로 맞춰주는 코드이다.
+128개보다 길면 잘라내고, 짧으면 빈 칸을 채워 길이를 통일한다.
 ```python
 tokenizer = DistilBertTokenizer.from_pretrained('distilbert-base-uncased')
 # distilbert-base-uncased: 대소문자 구분 없이 학습된 경량화 BERT 모델
@@ -392,6 +420,8 @@ class TextDataset(Dataset):
         self.labels = torch.tensor(list(labels), dtype=torch.long)
 ```
 
+
+BERT 모델을 불러온 뒤, 문제를 풀고 틀린 부분을 확인하며 수정하는 과정을 여러 번 반복하여 AI 글과 사람 글을 구분하는 능력을 키우는 코드이다.
 ```python
 # DistilBERT 모델 불러오기 (이진 분류이므로 num_labels=2)
 model = DistilBertForSequenceClassification.from_pretrained(
@@ -455,6 +485,7 @@ Precision이 높아도 Recall이 낮으면, 또는 그 반대여도 F1-score는 
 Accuracy만 보고 "잘 됐다"고 판단하기보다, F1-score까지 함께 확인해야 모델 성능을 더 정확하게 평가할 수 있다고 판단하였다.
 
 
+학습이 끝난 모델이 테스트 데이터를 얼마나 정확하게 분류했는지 Accuracy와 F1-score로 측정하는 코드이다.
 ```python
 from sklearn.metrics import accuracy_score, f1_score
 
