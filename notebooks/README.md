@@ -296,6 +296,8 @@ TF-IDF(Term Frequency-Inverse Document Frequency)는 단어의 중요도를 수�
 단순히 단어가 몇 번 나왔는지만 세는 게 아니라,
 특정 문서에서는 자주 나오지만 전체 문서에서는 흔하지 않은 단어일수록 높은 점수를 부여한다.
 
+
+텍스트를 숫자로 바꾸는 코드이다. 단어가 얼마나 자주, 얼마나 특별하게 쓰였는지를 점수로 표현한다.
 ```python
 # max_features=10000: 가장 많이 등장하는 단어 10,000개만 사용
 # ngram_range=(1,2): 단어 1개짜리와 2개짜리 조합을 모두 고려
@@ -304,7 +306,7 @@ X = tfidf.fit_transform(df['clean_text'])
 y = df['generated']
 ```
 
-전체 데이터의 80%로 학습, 나머지 20%로 테스트 사용한다.
+전체 데이터의 80%로 학습, 나머지 20%로 테스트 사용하는 코드이다.
 ```python
 # 전체 데이터의 80%로 학습, 나머지 20%로 테스트
 X_train, X_test, y_train, y_test = train_test_split(
