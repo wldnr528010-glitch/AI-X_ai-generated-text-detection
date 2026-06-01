@@ -183,22 +183,22 @@ lemmatizer = WordNetLemmatizer()
 
 # 에세이 데이터 전처리
 df_essay['generated'] = pd.to_numeric(df_essay['generated'], errors='coerce')
-# errors='coerce': 숫자로 변환 불가한 값은 빈 값(NaN)으로 처리
+# generated 컬럼의 값을 숫자로 변환한다. 숫자로 바꿀 수 없는 값은 빈 칸으로 처리한다
 
 df_essay = df_essay.dropna(subset=['generated', 'text'])
-# generated 또는 text 컬럼이 비어있는 행 삭제
+# generated나 text 중 하나라도 빈 칸인 행을 삭제한다
 
 df_essay['generated'] = df_essay['generated'].astype(int)
-# 소수점 형태(0.0)를 정수(0)로 변환
+# 0.0, 1.0 처럼 소수점 형태로 저장된 숫자를 0, 1 정수로 변환한다
 
 df_essay = df_essay[df_essay['generated'].isin([0, 1])].reset_index(drop=True)
-# 0 또는 1이 아닌 값 제거 후 행 번호 재정렬
+# 0(사람 글) 또는 1(AI 글)이 아닌 이상한 값을 가진 행을 제거한다
 
 df_essay['clean_text'] = df_essay['text'].apply(clean_text)
-# Step 2에서 정의한 clean_text() 함수를 모든 행에 적용
+# Step 2에서 만든 clean_text() 함수를 모든 행에 적용해 전처리된 텍스트를 저장한다
 
 df_essay = df_essay[df_essay['clean_text'].str.split().str.len() >= 5].reset_index(drop=True)
-# 전처리 후 단어가 5개 미만으로 남은 행 삭제 (너무 짧으면 학습 불가)
+# 전처리 후 단어가 5개보다 적게 남은 행을 삭제한다. 너무 짧으면 모델이 학습할 정보가 없기 때문이다
 ```
 
 뉴스 데이터와 Hard dataset도 동일한 과정으로 전처리를 수행하였다.
