@@ -328,7 +328,7 @@ TF (Term Frequency) : 특정 문서 안에서 어떤 단어가 얼마나 자주 
 IDF (Inverse Document Frequency) : 전체 문서 중에서 그 단어가 얼마나 흔한지. 여러 문서에서 공통적으로 나오는 단어일수록 낮은 값.
 
 둘을 곱하면 "특정 문서에서 자주 나오지만, 전체 문서에서는 흔하지 않은 단어" 에 높은 가중치가 부여된다.
-본 프로젝트에서는 전처리 단계에서 the, is, and 같은 불용어를 미리 제거했기 때문에, TF-IDF는 실제로 의미 있는 단어들만을 대상으로 가중치를 계산한다. 예를 들어 people처럼 Human과 AI 텍스트 모두에서 자주 등장하는 단어는 IDF가 낮아 TF-IDF 값이 낮고, additionally처럼 AI 텍스트에서만 집중적으로 나오는 단어는 TF-IDF 값이 높아진다. 이렇게 클래스를 구분하는 데 실질적으로 유용한 단어에만 높은 가중치를 주는 것이 TF-IDF의 핵심이다.
+본 프로젝트에서는 전처리 단계에서 the, is, and 같은 불용어를 미리 제거했기 때문에, TF-IDF는 실제로 의미 있는 단어들만을 대상으로 가중치를 계산한다. 예를 들어 furthermore처럼 AI 텍스트에서만 집중적으로 나오고 Human 텍스트에서는 잘 나오지 않는 단어는 TF-IDF 값이 높아져 AI 판별에 중요한 단어로 학습된다. 반대로 양쪽에서 비슷하게 등장하는 단어는 IDF가 낮아 TF-IDF 값도 낮아진다. 이렇게 클래스를 구분하는 데 실질적으로 유용한 단어에만 높은 가중치를 주는 것이 TF-IDF의 핵심이다.
 따라서 Human과 AI의 단어 사용 패턴이 뚜렷하게 다를수록 TF-IDF 벡터가 두 클래스를 잘 분리할 수 있다는 의미가 된다. 반대로 단어 분포가 거의 동일하다면, TF-IDF 기반 접근 자체를 재검토해야 한다.
 
 
@@ -358,7 +358,9 @@ Human 뉴스에는 trump, york, said, race처럼 실제 보도 특유의 어휘�
 Hard 데이터에서는 앞의 두 데이터셋과 가장 다른 양상이 나타난다.
 Human Top 20에는 people, state, one, new, time, would, vote, like, car, said가 등장하고, AI Top 20에는 also, new, state, people, one, time, life, community, student, may가 등장한다.
 people, state, one, new, time이 양쪽 모두의 상위권에 겹쳐서 등장한다. Human WordCloud에서는 people, said, new york, electoral college, first, world가 크게 보이고, AI WordCloud에서는 one, time, may, new york, community, life, experience가 크게 나타난다.
-이 패턴이 나타나는 이유는 Hard dataset의 구성에 있다. Hard는 essay(27.8%), news(27.3%), sentence/article(44.9%)의 혼합 데이터셋인데, 특히 sentence 타입(39.3%)은 CS/IT 교과서 문장(Human) vs AI가 작성한 CS 개념 설명(AI)으로 구성되어 있다. 주제 도메인이 동일하고 문장 길이도 평균 22단어로 매우 짧아, 단어 빈도만으로는 두 클래스를 구분하기 극히 어렵다. 이 구조적 차이가 Hard에서 고전 모델들의 성능이 제한된 핵심 이유다.
+이 패턴이 나타나는 이유는 Hard dataset의 구성에 있다. Hard는 essay(27.8%), news(27.3%), sentence/article(44.9%)로 이루어진 혼합 데이터셋인데, 특히 sentence 타입(39.3%)은 CS/IT 교과서 문장(Human) vs AI가 작성한 CS 개념 설명(AI)으로 구성되어 있다. 주제 도메인이 동일하고 문장 길이도 평균 22단어로 매우 짧아, 단어 빈도만으로는 두 클래스를 구분하기 극히 어렵다. 이 구조적 차이가 Hard에서 고전 모델들의 성능이 제한된 핵심 이유다.
+
+
 
 
 ### Classical Model Performance
