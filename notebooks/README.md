@@ -206,8 +206,15 @@ df_essay = df_essay[df_essay['clean_text'].str.split().str.len() >= 5].reset_ind
 
 뉴스 데이터와 Hard dataset도 동일한 과정으로 전처리를 수행하였다.
 
-전처리가 완료된 데이터는 아래 경로에 CSV로 저장된다.
+전처리가 완료된 데이터를 CSV파일 형식으로 저장하는 코드이다.
+```python
+# 전처리된 데이터 CSV로 저장
+df_essay.to_csv('essay_clean_dataset.csv', index=False, encoding='utf-8')
+df_news.to_csv('news_clean_dataset.csv',   index=False, encoding='utf-8')
+df_hard.to_csv('hard_clean_dataset.csv',   index=False, encoding='utf-8')
+```
 
+전처리가 완료된 데이터는 아래 경로에 CSV로 저장된다.
 ```
 ../data/processed/essay_clean_dataset.csv
 ../data/processed/news_clean_dataset.csv
@@ -526,12 +533,19 @@ Hard dataset에서는 BERT가 더 높은 성능을 보였다.
 
 코드를 실행하면 다음 결과물이 생성된다.
 
+```python
+# 최종 결과 CSV 저장
+df_results.to_csv('final_results.csv', index=False, encoding='utf-8-sig')
+```
+
+Step 4 에서 저장
 ```
 ../data/processed/
 ├── essay_clean_dataset.csv
 ├── news_clean_dataset.csv
 └── hard_clean_dataset.csv
 
+Step 5,6 에서 저장
 ../results/figures/
 ├── essay_words.png
 ├── news_words.png
@@ -541,6 +555,7 @@ Hard dataset에서는 BERT가 더 높은 성능을 보였다.
 ├── hard_classical.png
 └── final_all_models.png
 
+Step 9 에서 저장
 ../results/tables/
 └── final_results.csv
 ```
