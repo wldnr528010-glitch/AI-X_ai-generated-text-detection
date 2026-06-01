@@ -29,6 +29,44 @@
 그리고 Essay, News, Hard dataset을 각각 어떻게 해석해야 하는지를 팀원별로 나누어 설명하였다.
 
 
+## Index
+
+이 README는 프로젝트의 전체 흐름을 블로그 형식으로 정리한 문서이다.  
+프로젝트의 주제, 실험 설계, 모델 비교 결과, 시각화 해석, 한계점과 향후 개선 방향을 순서대로 확인할 수 있다.
+
+자세한 코드 실행 흐름과 알고리즘 구현 방식은 `notebooks/README.md`에 정리하였다.  
+전처리된 데이터의 생성 방식, `clean_text` 컬럼의 의미, 그리고 용량 문제로 업로드되지 않은 processed data에 대한 설명은 `data/processed/README.md`에 따로 정리하였다.
+
+| Section | Description |
+|---|---|
+| [Project Overview](#project-overview) | 프로젝트를 진행하게 된 배경과 전체 목표 설명 |
+| [Research Questions](#research-questions) | Essay, News, Hard dataset을 통해 확인하고자 한 연구 질문 정리 |
+| [Dataset](#dataset) | Essay, News, Hard dataset의 구성과 label 정의 설명 |
+| [Project Design](#project-design) | Essay와 News를 main experiment로 분리하고, Hard dataset을 additional experiment로 설정한 이유 설명 |
+| [Methodology](#methodology) | 데이터 로딩부터 전처리, 모델 학습, 결과 시각화까지의 전체 분석 흐름 |
+| [Text Preprocessing](#text-preprocessing) | 결측치 제거, 소문자 변환, 불용어 제거, lemmatization 등 기본 전처리 과정 요약 |
+| [Models](#models) | TF-IDF 기반 고전 머신러닝 모델과 DistilBERT 모델 설명 |
+| [Evaluation Metrics](#evaluation-metrics) | Accuracy와 F1-score를 평가 지표로 사용한 이유 설명 |
+| [Repository Structure](#repository-structure) | GitHub repository의 폴더 및 파일 구조 설명 |
+| [How to Run](#how-to-run) | 프로젝트 실행 방법과 필요한 명령어 안내 |
+| [Expected Output](#expected-output) | 코드 실행 후 생성되는 전처리 데이터, 시각화 이미지, 결과 파일 안내 |
+| [Results Summary](#results-summary) | Main experiment와 additional experiment의 모델 성능 비교 |
+| [Visualization](#visualization) | Word frequency, classical model performance, final model comparison 그래프 해석 |
+| [Conclusion](#conclusion) | 전체 실험 결과를 바탕으로 도출한 핵심 결론 |
+| [Limitations](#limitations) | 데이터 품질, 실험 조건, 모델 비교 방식에서의 한계점 |
+| [Future Work](#future-work) | 향후 확장 가능한 실험 방향 |
+| [References](#references) | 프로젝트에서 참고한 주요 라이브러리 문서 |
+
+### Additional Documentation
+
+| File | Description |
+|---|---|
+| `notebooks/README.md` | 메인 코드의 실행 순서, 함수 구성, TF-IDF 및 BERT 학습 과정 등 코드 중심 설명 |
+| `data/processed/README.md` | 전처리된 데이터의 의미, 생성 방식, `clean_text` 컬럼 설명, GitHub 업로드 용량 제한 관련 안내 |
+| `notebooks/human_vs_ai_text_classification.py` | 데이터 전처리, 시각화, 모델 학습, 결과 저장을 수행하는 메인 Python 코드 |
+| `results/figures/` | Word frequency, classical model performance, final model comparison 이미지 저장 폴더 |
+| `results/tables/final_results.csv` | 각 모델의 Accuracy와 F1-score를 정리한 최종 결과표 |
+
 ## Project Overview
 
 최근 ChatGPT와 같은 생성형 AI가 글쓰기, 뉴스 작성, 과제물 작성 등 다양한 영역에서 활용되면서 AI가 작성한 텍스트와 사람이 작성한 텍스트를 구분하는 문제가 중요해지고 있다.
