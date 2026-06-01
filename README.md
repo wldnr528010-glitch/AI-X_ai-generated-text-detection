@@ -192,32 +192,6 @@ Essay와 News 데이터에서는 대부분의 모델이 높은 성능을 보였�
 Hard dataset에서는 고전 머신러닝 모델의 성능이 상대적으로 낮아졌지만, BERT는 93.3%의 정확도를 보여 더 어려운 데이터에서 강점을 보였다.
 
 
-## Visualization
-
-### Word Frequency Analysis
-
-Essay와 News 데이터에서 Human-written text와 AI-generated text의 단어 사용 패턴을 비교하였다. 
-
-![Essay Word Frequency](results/figures/essay_words.png)
-
-
-![News Word Frequency](results/figures/news_words.png)
-
-
-### Classical Model Performance
-
-각 데이터셋에 대해 고전 머신러닝 모델의 Accuracy와 F1-score를 비교하였다.
-
-![Essay Classical Models](results/figures/essay_classical.png)
-
-![News Classical Models](results/figures/news_classical.png)
-
-### Final Model Comparison
-
-고전 머신러닝 모델과 BERT 모델의 성능을 최종 비교하였다.
-
-![Final Model Comparison](results/figures/final_all_models.png)
-
 
 ## Repository Structure
 
