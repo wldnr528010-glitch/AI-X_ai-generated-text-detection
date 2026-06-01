@@ -309,8 +309,6 @@ visualize_classical(hard_results,  'Hard', 'gray')
 # ------------------------------------------------------------------------------------------------------------------------------------------------ #
 
 
-############### 최신 모델 학습하는 코드로 돌리면 30분 넘게 걸리십니다. 돌리지 마세요 !!! ###############
-############### 간단하게 확인하고 싶으시면, 7-1번 코드 실행하세요 !!! ###############
 
 
 ## 7. 최신 모델 BERT 학습
@@ -421,116 +419,6 @@ bert_hard = run_bert(df_hard, 'Hard', epochs=3, sample_n=5000)
 # ------------------------------------------------------------------------------------------------------------------------------------------------ #
 
 
-############### 이거 돌리세요. 최신 모델 학습하는 방식으로 샘플 수를 줄였습니다. ###############
-
-
-## 7-1. 최신 모델 BERT 학습 (샘플 수 5000 -> 1000 / 및 epoch 3->2 감소)
-
-### BERT란?
-### 고전 모델들은 단어 빈도만 보지만, BERT는 문장 전체의 문맥과 의미를 이해한다.
-
-### 사용 모델
-#### DistilBERT: BERT의 경량화 버전 (속도 빠름, 성능 유사)
-
-### 학습 방법
-#### 전체 데이터의 80%(4,000개)로 학습
-#### 나머지 20%(1,000개)로 성능 테스트
-
-
-tokenizer = DistilBertTokenizer.from_pretrained('distilbert-base-uncased')
-
-class TextDataset(Dataset):
-    """BERT 학습을 위해 텍스트를 토큰으로 변환하는 클래스입니다."""
-    def __init__(self, texts, labels, max_len=128):
-        self.encodings = tokenizer(
-            list(texts), truncation=True, padding=True,
-            max_length=max_len, return_tensors='pt'
-        )
-        self.labels = torch.tensor(list(labels), dtype=torch.long)
-    def __len__(self):
-        return len(self.labels)
-    def __getitem__(self, idx):
-        return {
-            'input_ids':      self.encodings['input_ids'][idx],
-            'attention_mask': self.encodings['attention_mask'][idx],
-            'labels':         self.labels[idx]
-        }
-
-def run_bert(df, domain_name, epochs=2, sample_n=1000, max_len=128):
-    """BERT 모델을 학습하고 성능을 출력합니다."""
-    print(f"\n{'='*50}")
-    print(f"  BERT - {domain_name} 학습 시작")
-    print(f"{'='*50}")
-
-    df = df.copy()
-    df['generated'] = pd.to_numeric(df['generated'], errors='coerce')
-    df = df.dropna(subset=['generated', 'text'])
-    df['generated'] = df['generated'].astype(int)
-    df = df[df['generated'].isin([0, 1])].reset_index(drop=True)
-
-    # 샘플 수 조절
-    n = min(sample_n // 2, len(df[df['generated']==0]), len(df[df['generated']==1]))
-    df = df.groupby('generated').sample(n=n, random_state=42).reset_index(drop=True)
-    print(f"사용 샘플: {len(df)}개 (사람: {n}개, AI: {n}개)")
-
-    X_train, X_test, y_train, y_test = train_test_split(
-        df['text'], df['generated'],
-        test_size=0.2, random_state=42, stratify=df['generated']
-    )
-    print(f"학습용: {len(X_train)}개 / 테스트용: {len(X_test)}개")
-
-    train_loader = DataLoader(TextDataset(X_train.values, y_train.values, max_len), batch_size=32, shuffle=True)
-    test_loader  = DataLoader(TextDataset(X_test.values,  y_test.values,  max_len), batch_size=32)
-
-    model = DistilBertForSequenceClassification.from_pretrained(
-        'distilbert-base-uncased', num_labels=2
-    ).to(device)
-    optimizer = AdamW(model.parameters(), lr=2e-5)
-
-    for epoch in range(epochs):
-        model.train()
-        total_loss = 0
-        for batch in train_loader:
-            optimizer.zero_grad()
-            outputs = model(
-                input_ids=batch['input_ids'].to(device),
-                attention_mask=batch['attention_mask'].to(device),
-                labels=batch['labels'].to(device)
-            )
-            outputs.loss.backward()
-            optimizer.step()
-            total_loss += outputs.loss.item()
-        print(f"Epoch {epoch+1}/{epochs} - Loss: {total_loss/len(train_loader):.4f}")
-
-    model.eval()
-    all_preds, all_labels = [], []
-    with torch.no_grad():
-        for batch in test_loader:
-            outputs = model(
-                input_ids=batch['input_ids'].to(device),
-                attention_mask=batch['attention_mask'].to(device)
-            )
-            all_preds.extend(torch.argmax(outputs.logits, dim=1).cpu().numpy())
-            all_labels.extend(batch['labels'].numpy())
-
-    acc = accuracy_score(all_labels, all_preds)
-    f1  = f1_score(all_labels, all_preds)
-    print(f"\n✅ [BERT - {domain_name}]")
-    print(f"  Accuracy : {acc*100:.2f}%")
-    print(f"  F1-score : {f1*100:.2f}%")
-    return {'Accuracy': acc, 'F1-score': f1}
-
-
-# 에세이 BERT 학습 (약 2분 소요)
-bert_essay = run_bert(df_essay, 'Essay', epochs=2, sample_n=1000)
-
-# 뉴스 BERT 학습 (약 2분 소요)
-bert_news = run_bert(df_news, 'News', epochs=2, sample_n=1000)
-
-# 어려운 데이터 BERT 학습 (약 2분 소요)
-bert_hard = run_bert(df_hard, 'Hard', epochs=2, sample_n=1000)
-
-# ------------------------------------------------------------------------------------------------------------------------------------------------ #
 
 
 
