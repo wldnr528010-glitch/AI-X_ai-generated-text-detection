@@ -3,6 +3,7 @@
 ## Title: AI 생성 콘텐츠 탐지 모델 비교 분석  
 ### AI 글·뉴스를 머신러닝으로 구분할 수 있을까?
 
+## 동영상 설명 링크 : https://youtu.be/UsmJwHSinH8?si=gtFuaZzPGGHL2vCi
 
 
 ## Members and Team Contribution
